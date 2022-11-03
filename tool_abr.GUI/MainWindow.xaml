@@ -16,27 +16,42 @@
         <!-- Main Frame -->
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="150"/>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="180"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
-            <MenuItem Header="File">
-                <MenuItem Name="Save" Header="SaveSetting" Click="Save_Click" />
-                <MenuItem Name="Load" Header="LoadSetting" Click="Load_Click" />
+            <MenuItem Padding="3" Header="File">
+                <MenuItem Name="Open" Padding="3" Header="Open Dir" Click="Open_Click" />
+                <MenuItem Name="Default" Padding="3" Header="Assign Default" Click="AD_Click" />
                 <Separator />
-                <MenuItem Name="Exit" Header="Exit" Click="Exit_Click" />
+                <MenuItem Name="Save" Padding="3" Header="SaveSetting" Click="Save_Click" />
+                <MenuItem Name="Load" Padding="3" Header="LoadSetting" Click="Load_Click" />
+                <Separator />
+                <MenuItem Name="Exit" Padding="3" Header="Exit" Click="Exit_Click" />
             </MenuItem>
         </Menu>
         <ListBox Name="ModuleListView" ItemsSource="{Binding Setting.Settings}" Grid.Row="1" SelectionChanged="ModuleListView_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <ListBoxItem Content="{Binding Name}" />
+                    <StackPanel Orientation="Horizontal">
+                        <ListBoxItem Content="{Binding Name}" HorizontalAlignment="Stretch" />
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Remove" Click="Removeabr_Click" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add" Click="Addnew_Click"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
         </ListBox>
-        <Grid Name="ModuleOptionsView" Grid.Row="2" Margin="8">
+        <Grid Name="ModuleOptionsView" Grid.Row="2" Margin="8" ScrollViewer.VerticalScrollBarVisibility="Visible">
             <Grid.DataContext>
                 <core:ABRSetting />
             </Grid.DataContext>
@@ -71,7 +86,7 @@
             <Label Content="k" Grid.Column="2" Grid.Row="5" />
 
         </Grid>
-        <Grid Name="MasterM3U8View" Grid.Row="3" Margin="8">
+        <Grid Name="MasterM3U8View" Grid.Row="3" Margin="8" ScrollViewer.VerticalScrollBarVisibility="Visible">
             <Grid.DataContext>
                 <core:M3U8Setting />
             </Grid.DataContext>
@@ -91,32 +106,35 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
             </Grid.RowDefinitions>
 
             <Label Content="Sync" Grid.Column="0" Grid.Row="0" />
-            <Label Content="Input" Grid.Column="0" Grid.Row="1" />
-            <Label Content="Master Name" Grid.Column="0" Grid.Row="2" />
-            <Label Content="Type" Grid.Column="0" Grid.Row="3" />
-            <Label Content="ListSize" Grid.Column="0" Grid.Row="4" />
-            <Label Content="DeleteFlag" Grid.Column="0" Grid.Row="5" />
-            <Label Content="AppendFlag" Grid.Column="0" Grid.Row="6" />
-            <Label Content="MuxingQueue" Grid.Column="0" Grid.Row="7" />
-            <Label Content="Output M3U8" Grid.Column="0" Grid.Row="8" />
-            <Label Content="Output Segment" Grid.Column="0" Grid.Row="9" />
+            <Label Content="Stream Loop" Grid.Column="0" Grid.Row="1" />
+            <Label Content="Use Wall Clock" Grid.Column="0" Grid.Row="2" />
+            <Label Content="Input" Grid.Column="0" Grid.Row="3" />
+            <Label Content="Master Name" Grid.Column="0" Grid.Row="4" />
+            <Label Content="Type" Grid.Column="0" Grid.Row="5" />
+            <Label Content="ListSize" Grid.Column="0" Grid.Row="6" />
+            <Label Content="DeleteFlag" Grid.Column="0" Grid.Row="7" />
+            <Label Content="AppendFlag" Grid.Column="0" Grid.Row="8" />
+            <Label Content="MuxingQueue" Grid.Column="0" Grid.Row="9" />
+            <Label Content="Output M3U8" Grid.Column="0" Grid.Row="10" />
+            <Label Content="Output Segment" Grid.Column="0" Grid.Row="11" />
 
             <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding Sync}" Grid.Column="1" Grid.Row="0" />
-            <TextBox Text="{Binding Input}" Grid.Column="1" Grid.Row="1" />
-            <TextBox Text="{Binding MasterName}" Grid.Column="1" Grid.Row="2" />
-            <ComboBox Grid.Column="1" Grid.Row="3" ItemsSource="{Binding HLSTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Type}" />
-            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding ListSize}" Grid.Column="1" Grid.Row="4" />
-            <CheckBox IsChecked="{Binding DeleteFlag}" Grid.Column="1" Grid.Row="5" />
-            <CheckBox IsChecked="{Binding AppendFlag}" Grid.Column="1" Grid.Row="6" />
-            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding MuxingQueue}" Grid.Column="1" Grid.Row="7" />
-            <TextBox Text="{Binding OutputM3U8FileName}" Grid.Column="1" Grid.Row="8" />
-            <TextBox Text="{Binding OutputSegmentFileName}" Grid.Column="1" Grid.Row="9" />
-            
-            <Label Content="k" Grid.Column="2" Grid.Row="4" />
-
+            <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding StreamingLoop}" Grid.Column="1" Grid.Row="1" />
+            <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding Wall_Clock}" Grid.Column="1" Grid.Row="2" />
+            <TextBox Text="{Binding Input}" Grid.Column="1" Grid.Row="3" />
+            <TextBox Text="{Binding MasterName}" Grid.Column="1" Grid.Row="4" />
+            <ComboBox Grid.Column="1" Grid.Row="5" ItemsSource="{Binding HLSTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Type}" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding ListSize}" Grid.Column="1" Grid.Row="6" />
+            <CheckBox IsChecked="{Binding DeleteFlag}" Grid.Column="1" Grid.Row="7" />
+            <CheckBox IsChecked="{Binding AppendFlag}" Grid.Column="1" Grid.Row="8" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding MuxingQueue}" Grid.Column="1" Grid.Row="9" />
+            <TextBox Text="{Binding OutputM3U8FileName}" Grid.Column="1" Grid.Row="10" />
+            <TextBox Text="{Binding OutputSegmentFileName}" Grid.Column="1" Grid.Row="11" />
         </Grid>
         <Button Name="RunButton" Content="RUN" Grid.Row="4" Click="RunButton_Click" />
     </Grid>

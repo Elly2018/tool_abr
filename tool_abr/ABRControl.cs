@@ -18,6 +18,7 @@ namespace Funique
         }
         static ABRControl _Instance;
 
+        string dir = null;
         Process process
         {
             get
@@ -25,16 +26,15 @@ namespace Funique
                 Process proc = new Process();
                 proc.StartInfo.RedirectStandardInput = true;
                 proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.WorkingDirectory = Directory.GetCurrentDirectory();
+                proc.StartInfo.WorkingDirectory = dir == null ? Directory.GetCurrentDirectory() : dir;
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.CreateNoWindow = false;
                 proc.StartInfo.FileName = "ffmpeg";
                 return proc;
             }
         }
-        public List<M3U8Setting> loads = new List<M3U8Setting>();
-        public string[] filechanged = new string[0];
-        public string[] loads_string = new string[0];
+
+        public void SetDirectory(string dir) => this.dir = dir;
 
         public void Call(M3U8Setting setting)
         {

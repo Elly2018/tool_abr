@@ -32,6 +32,7 @@ namespace Funique.GUI
         public MainWindow()
         {
             InitializeComponent();
+            this.Title = "ABR Helper";
             ctx = new WindowDataContext();
         }
 
@@ -39,7 +40,6 @@ namespace Funique.GUI
         {
             MasterM3U8View.DataContext = ctx.Setting;
             ModuleOptionsView.DataContext = null;
-            ModuleListView_RightClickMenu();
         }
 
         private void TextBox_IntOnly(object sender, TextCompositionEventArgs e)
@@ -49,23 +49,33 @@ namespace Funique.GUI
 
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine(ctx.Setting.Arguments);
-        }
-
-        void ModuleListView_RightClickMenu()
-        {
-            ContextMenu cm = new ContextMenu();
-            MenuItem Addnew = new MenuItem();
-            Addnew.Header = "New";
-            Addnew.Click += Addnew_Click;
-            cm.Items.Add(Addnew);
-            ModuleListView.ContextMenu = cm;
+            ctx.Control.Call(ctx.Setting);
         }
 
         private void Addnew_Click(object sender, RoutedEventArgs e)
         {
             ctx.Setting.Settings.Add(new ABRSetting());
             ModuleListView.ItemsSource = ctx.Setting.Settings;
+        }
+
+        private void Removeabr_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem menuItem = sender as MenuItem;
+            if (menuItem != null)
+            {
+                ContextMenu parentContextMenu = menuItem.CommandParameter as ContextMenu;
+                if (parentContextMenu != null)
+                {
+                    ListBoxItem listViewItem = parentContextMenu.PlacementTarget as ListBoxItem;
+                    ABRSetting cf = listViewItem.DataContext as ABRSetting;
+                    if(ModuleOptionsView.DataContext == cf)
+                    {
+                        ModuleOptionsView.DataContext = null;
+                    }
+                    ctx.Setting.Settings.Remove(cf);
+                    ModuleListView.ItemsSource = ctx.Setting.Settings;
+                }
+            }
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -75,17 +85,64 @@ namespace Funique.GUI
 
         private void Load_Click(object sender, RoutedEventArgs e)
         {
-
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.DefaultExt = ".json";
+            ofd.Filter = "Json file (.json)|*.json";
+            bool? success = ofd.ShowDialog();
+            if (success == true)
+            {
+                ctx.Setting.Load(ofd.FileName);
+                ModuleListView.SelectedIndex = -1;
+                ModuleListView.ItemsSource = ctx.Setting.Settings;
+            }
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.DefaultExt = ".json";
+            sfd.Filter = "Json file (.json)|*.json";
+            bool? success = sfd.ShowDialog();
+            if(success == true)
+            {
+                ctx.Setting.Save(sfd.FileName);
+            }
+        }
 
+        private void Open_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;
+            dialog.Multiselect = false;
+            CommonFileDialogResult result = dialog.ShowDialog();
+            if (result == CommonFileDialogResult.Ok)
+            {
+                ctx.Control.SetDirectory(dialog.FileName);
+                this.Title = $"ABR Helper, Path=\'{dialog.FileName}\'";
+            }
+        }
+
+        private void AD_Click(object sender, RoutedEventArgs e)
+        {
+            ctx.Setting.Input = "http://vrlive-hamivideo.cdn.hinet.net/nxvi/nxv880e_8k.m3u8";
+            ctx.Setting.MasterName = "master.m3u8";
+            ctx.Setting.ListSize = 6;
+            ctx.Setting.Type = HLSType.FMP4;
+            ctx.Setting.DeleteFlag = true;
+            ctx.Setting.AppendFlag = true;
+            ctx.Setting.MuxingQueue = 99999;
+            ctx.Setting.OutputM3U8FileName = "v%v/prog_index.m3u8";
+            ctx.Setting.OutputSegmentFileName = "v%v/fileSequence%d.m4s";
         }
 
         private void ModuleListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListBox lb = e.OriginalSource as ListBox;
+            if (lb.SelectedIndex == -1)
+            {
+                ModuleOptionsView.DataContext = null;
+                return;
+            }
             ABRSetting target = ctx.Setting.Settings[lb.SelectedIndex];
             ModuleOptionsView.DataContext = target;
         }

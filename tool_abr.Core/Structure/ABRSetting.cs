@@ -1,18 +1,19 @@
-﻿using System.ComponentModel;
+﻿using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace Funique
 {
     [System.Serializable]
     public sealed class ABRSetting : INotifyPropertyChanged
     {
-        string _Name { set; get; } = "Default Name";
-        int _Width { set; get; }
-        int _Height { set; get; }
-        string _VideoCodec { set; get; }
-        string _AudioCodec { set; get; }
-        int _BitRate { set; get; }
+        string _Name = "Default Name";
+        int _Width;
+        int _Height;
+        string _VideoCodec;
+        string _AudioCodec;
+        int _BitRate;
 
-        public string Name
+        [JsonProperty] public string Name
         {
             set
             {
@@ -21,7 +22,7 @@ namespace Funique
             }
             get => _Name;
         }
-        public int Width
+        [JsonProperty] public int Width
         {
             set 
             {
@@ -30,7 +31,7 @@ namespace Funique
             }
             get => _Width;
         }
-        public int Height
+        [JsonProperty] public int Height
         {
             set 
             {
@@ -39,7 +40,7 @@ namespace Funique
             }
             get => _Height;
         }
-        public string VideoCodec
+        [JsonProperty] public string VideoCodec
         {
             set
             {
@@ -48,7 +49,7 @@ namespace Funique
             }
             get => _VideoCodec;
         }
-        public string AudioCodec
+        [JsonProperty] public string AudioCodec
         {
             set
             {
@@ -57,7 +58,7 @@ namespace Funique
             }
             get => _AudioCodec;
         }
-        public int BitRate
+        [JsonProperty] public int BitRate
         {
             set
             {
