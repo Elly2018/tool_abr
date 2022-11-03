@@ -7,6 +7,7 @@
         xmlns:core="clr-namespace:Funique;assembly=Funique.Core"
         mc:Ignorable="d"
         Width="{Binding WindowWidth, Mode=TwoWay}"
+        Loaded="Window_Loaded"
         Title="Clipping Master" MinHeight="600" MinWidth="600" Style="{DynamicResource CustomWindowStyle}">
     <Window.DataContext>
         <local:WindowDataContext />
@@ -15,16 +16,34 @@
         <!-- Main Frame -->
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="150"/>
+            <RowDefinition Height="150"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Name="Save" Header="SaveSetting" Click="Save_Click" />
+                <MenuItem Name="Load" Header="LoadSetting" Click="Load_Click" />
+                <Separator />
+                <MenuItem Name="Exit" Header="Exit" Click="Exit_Click" />
+            </MenuItem>
         </Menu>
-        <ListBox Name="ModuleListView" Grid.Row="1"/>
-        <Grid Name="ModuleOptionsView" Grid.Row="2">
+        <ListBox Name="ModuleListView" ItemsSource="{Binding Setting.Settings}" Grid.Row="1" SelectionChanged="ModuleListView_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <ListBoxItem Content="{Binding Name}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Grid Name="ModuleOptionsView" Grid.Row="2" Margin="8">
+            <Grid.DataContext>
+                <core:ABRSetting />
+            </Grid.DataContext>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="25" />
@@ -32,14 +51,73 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            
-            <Label Content="Width" Grid.Column="0" Grid.Row="0" />
-            <Label Content="Height" Grid.Column="0" Grid.Row="1" />
-            <Label Content="Video Codec" Grid.Column="0" Grid.Row="2" />
-            <Label Content="Audio Codec" Grid.Column="0" Grid.Row="3" />
-            <Label Content="Bitrate" Grid.Column="0" Grid.Row="4" />
+
+            <Label Content="Name" Grid.Column="0" Grid.Row="0" />
+            <Label Content="Width" Grid.Column="0" Grid.Row="1" />
+            <Label Content="Height" Grid.Column="0" Grid.Row="2" />
+            <Label Content="Video Codec" Grid.Column="0" Grid.Row="3" />
+            <Label Content="Audio Codec" Grid.Column="0" Grid.Row="4" />
+            <Label Content="Bitrate" Grid.Column="0" Grid.Row="5" />
+
+            <TextBox Text="{Binding Name}" Grid.Column="1" Grid.Row="0" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding Width}" Grid.Column="1" Grid.Row="1" Visibility="{Binding Path=., TargetNullValue=Collapsed }" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding Height}" Grid.Column="1" Grid.Row="2" Visibility="{Binding Path=., TargetNullValue=Collapsed }" />
+            <TextBox Text="{Binding VideoCodec}" Grid.Column="1" Grid.Row="3" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+            <TextBox Text="{Binding AudioCodec}" Grid.Column="1" Grid.Row="4" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding BitRate}" Grid.Column="1" Grid.Row="5" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+
+            <Label Content="k" Grid.Column="2" Grid.Row="5" />
 
         </Grid>
+        <Grid Name="MasterM3U8View" Grid.Row="3" Margin="8">
+            <Grid.DataContext>
+                <core:M3U8Setting />
+            </Grid.DataContext>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+            </Grid.RowDefinitions>
+
+            <Label Content="Sync" Grid.Column="0" Grid.Row="0" />
+            <Label Content="Input" Grid.Column="0" Grid.Row="1" />
+            <Label Content="Master Name" Grid.Column="0" Grid.Row="2" />
+            <Label Content="Type" Grid.Column="0" Grid.Row="3" />
+            <Label Content="ListSize" Grid.Column="0" Grid.Row="4" />
+            <Label Content="DeleteFlag" Grid.Column="0" Grid.Row="5" />
+            <Label Content="AppendFlag" Grid.Column="0" Grid.Row="6" />
+            <Label Content="MuxingQueue" Grid.Column="0" Grid.Row="7" />
+            <Label Content="Output M3U8" Grid.Column="0" Grid.Row="8" />
+            <Label Content="Output Segment" Grid.Column="0" Grid.Row="9" />
+
+            <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding Sync}" Grid.Column="1" Grid.Row="0" />
+            <TextBox Text="{Binding Input}" Grid.Column="1" Grid.Row="1" />
+            <TextBox Text="{Binding MasterName}" Grid.Column="1" Grid.Row="2" />
+            <ComboBox Grid.Column="1" Grid.Row="3" ItemsSource="{Binding HLSTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Type}" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding ListSize}" Grid.Column="1" Grid.Row="4" />
+            <CheckBox IsChecked="{Binding DeleteFlag}" Grid.Column="1" Grid.Row="5" />
+            <CheckBox IsChecked="{Binding AppendFlag}" Grid.Column="1" Grid.Row="6" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding MuxingQueue}" Grid.Column="1" Grid.Row="7" />
+            <TextBox Text="{Binding OutputM3U8FileName}" Grid.Column="1" Grid.Row="8" />
+            <TextBox Text="{Binding OutputSegmentFileName}" Grid.Column="1" Grid.Row="9" />
+            
+            <Label Content="k" Grid.Column="2" Grid.Row="4" />
+
+        </Grid>
+        <Button Name="RunButton" Content="RUN" Grid.Row="4" Click="RunButton_Click" />
     </Grid>
 </Window>

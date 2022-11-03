@@ -2,15 +2,13 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Threading;
 
 namespace Funique.GUI
 {
     public class WindowDataContext : INotifyPropertyChanged
     {
+        public M3U8Setting Setting { set; get; } = new M3U8Setting();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged([CallerMemberName] string name = null)
