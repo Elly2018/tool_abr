@@ -1,0 +1,4 @@
+[submodule "bin/Debug/netcoreapp3.1/Assets/FuniquePlugin/Video"]
+	path = bin/Debug/netcoreapp3.1/Assets/FuniquePlugin/Video
+	url = https://github.com/Funique2022/funique_video.git
+	branch = v1.0.0

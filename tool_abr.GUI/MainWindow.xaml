@@ -1,0 +1,45 @@
+﻿<Window x:Class="Funique.GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Funique.GUI"
+        xmlns:core="clr-namespace:Funique;assembly=Funique.Core"
+        mc:Ignorable="d"
+        Width="{Binding WindowWidth, Mode=TwoWay}"
+        Title="Clipping Master" MinHeight="600" MinWidth="600" Style="{DynamicResource CustomWindowStyle}">
+    <Window.DataContext>
+        <local:WindowDataContext />
+    </Window.DataContext>
+    <Grid>
+        <!-- Main Frame -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+        </Menu>
+        <ListBox Name="ModuleListView" Grid.Row="1"/>
+        <Grid Name="ModuleOptionsView" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+            </Grid.RowDefinitions>
+            
+            <Label Content="Width" Grid.Column="0" Grid.Row="0" />
+            <Label Content="Height" Grid.Column="0" Grid.Row="1" />
+            <Label Content="Video Codec" Grid.Column="0" Grid.Row="2" />
+            <Label Content="Audio Codec" Grid.Column="0" Grid.Row="3" />
+            <Label Content="Bitrate" Grid.Column="0" Grid.Row="4" />
+
+        </Grid>
+    </Grid>
+</Window>
