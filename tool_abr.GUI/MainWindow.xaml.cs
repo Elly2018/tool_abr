@@ -66,7 +66,8 @@ namespace Funique.GUI
                 ContextMenu parentContextMenu = menuItem.CommandParameter as ContextMenu;
                 if (parentContextMenu != null)
                 {
-                    ListBoxItem listViewItem = parentContextMenu.PlacementTarget as ListBoxItem;
+                    Debug.WriteLine(parentContextMenu.PlacementTarget.GetType().FullName);
+                    StackPanel listViewItem = parentContextMenu.PlacementTarget as StackPanel;
                     ABRSetting cf = listViewItem.DataContext as ABRSetting;
                     if(ModuleOptionsView.DataContext == cf)
                     {
@@ -74,6 +75,45 @@ namespace Funique.GUI
                     }
                     ctx.Setting.Settings.Remove(cf);
                     ModuleListView.ItemsSource = ctx.Setting.Settings;
+                }
+            }
+        }
+
+        private void MoveUp_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem menuItem = sender as MenuItem;
+            if (menuItem != null)
+            {
+                ContextMenu parentContextMenu = menuItem.CommandParameter as ContextMenu;
+                if (parentContextMenu != null)
+                {
+                    Debug.WriteLine(parentContextMenu.PlacementTarget.GetType().FullName);
+                    StackPanel listViewItem = parentContextMenu.PlacementTarget as StackPanel;
+                    ABRSetting cf = listViewItem.DataContext as ABRSetting;
+                    int i = ctx.Setting.Settings.IndexOf(cf);
+                    if (i > 0)
+                    {
+                        ctx.Setting.Settings.Move(i - 1, i);
+                    }
+                }
+            }
+        }
+        private void MoveDown_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem menuItem = sender as MenuItem;
+            if (menuItem != null)
+            {
+                ContextMenu parentContextMenu = menuItem.CommandParameter as ContextMenu;
+                if (parentContextMenu != null)
+                {
+                    Debug.WriteLine(parentContextMenu.PlacementTarget.GetType().FullName);
+                    StackPanel listViewItem = parentContextMenu.PlacementTarget as StackPanel;
+                    ABRSetting cf = listViewItem.DataContext as ABRSetting;
+                    int i = ctx.Setting.Settings.IndexOf(cf);
+                    if(i < ctx.Setting.Settings.Count - 1)
+                    {
+                        ctx.Setting.Settings.Move(i, i + 1);
+                    }
                 }
             }
         }

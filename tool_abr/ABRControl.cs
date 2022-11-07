@@ -40,6 +40,7 @@ namespace Funique
         {
             Process proc = process;
             proc.StartInfo.Arguments = setting.Arguments;
+            Debug.WriteLine(proc.StartInfo.Arguments);
             proc.Start();
         }
     }

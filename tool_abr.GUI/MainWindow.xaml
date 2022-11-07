@@ -39,6 +39,9 @@
                         <ListBoxItem Content="{Binding Name}" HorizontalAlignment="Stretch" />
                         <StackPanel.ContextMenu>
                             <ContextMenu>
+                                <MenuItem Header="MoveUp" Click="MoveUp_Click" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
+                                <MenuItem Header="MoveDown" Click="MoveDown_Click" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
+                                <Separator />
                                 <MenuItem Header="Remove" Click="Removeabr_Click" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
                             </ContextMenu>
                         </StackPanel.ContextMenu>
