@@ -12,22 +12,32 @@ namespace Funique
     public sealed class M3U8Setting : INotifyPropertyChanged
     {
         [JsonIgnore] public Dictionary<HLSType, string> HLSTypeDict => HLSTypeUtility.HLSTypeDict;
+        [JsonIgnore] public Dictionary<HLSPlaylistType, string> HLSPlaylistTypeDict => HLSTypeUtility.HLSPlaylistTypeDict;
 
         bool _Sync;
         bool _StreamingLoop;
         bool _Wall_Clock;
+        bool _Cache;
         string _Input;
         string _MasterName;
         int _Type;
         int _ListSize;
+        int _HLSInitTime;
+        int _HLSTime;
+        int _StartTime;
+        int _FKeyframe;
+        int _PlaylistType;
         bool _DeleteFlag;
         bool _AppendFlag;
+        bool _IndenFlag;
+        bool _SplitFlag;
         int _MuxingQueue;
         string _OutputM3U8FileName;
         string _OutputSegmentFileName;
         ObservableCollection<ABRSetting> _Settings = new ObservableCollection<ABRSetting>();
 
-        [JsonProperty] public bool Sync
+        [JsonProperty] 
+        public bool Sync
         {
             set
             {
@@ -55,6 +65,16 @@ namespace Funique
                 OnPropertyChanged("Wall_Clock");
             }
             get => _Wall_Clock;
+        }
+        [JsonProperty]
+        public bool Cache
+        {
+            set
+            {
+                _Cache = value;
+                OnPropertyChanged("Cache");
+            }
+            get => _Cache;
         }
         [JsonProperty] public string Input
         {
@@ -92,6 +112,54 @@ namespace Funique
             }
             get => _ListSize;
         }
+        [JsonProperty]
+        public int HLSInitTime
+        {
+            set
+            {
+                _HLSInitTime = value;
+                OnPropertyChanged("HLSInitTime");
+            }
+            get => _HLSInitTime;
+        }
+        [JsonProperty] public int HLSTime
+        {
+            set
+            {
+                _HLSTime = value;
+                OnPropertyChanged("HLSTime");
+            }
+            get => _HLSTime;
+        }
+        [JsonProperty]
+        public int StartTime
+        {
+            set
+            {
+                _StartTime = value;
+                OnPropertyChanged("StartTime");
+            }
+            get => _StartTime;
+        }
+        [JsonProperty]
+        public int FKeyframe
+        {
+            set
+            {
+                _FKeyframe = value;
+                OnPropertyChanged("FKeyframe");
+            }
+            get => _FKeyframe;
+        }
+        [JsonProperty] public HLSPlaylistType PlaylistType
+        {
+            set
+            {
+                _PlaylistType = (int)value;
+                OnPropertyChanged("PlaylistType");
+            }
+            get => (HLSPlaylistType)_PlaylistType;
+        }
         [JsonProperty] public bool DeleteFlag
         {
             set
@@ -109,6 +177,24 @@ namespace Funique
                 OnPropertyChanged("AppendFlag");
             }
             get => _AppendFlag;
+        }
+        [JsonProperty] public bool IndenFlag
+        {
+            set
+            {
+                _IndenFlag = value;
+                OnPropertyChanged("IndenFlag");
+            }
+            get => _IndenFlag;
+        }
+        [JsonProperty] public bool SplitFlag
+        {
+            set
+            {
+                _SplitFlag = value;
+                OnPropertyChanged("SplitFlag");
+            }
+            get => _SplitFlag;
         }
         [JsonProperty] public int MuxingQueue
         {
@@ -168,12 +254,19 @@ namespace Funique
             {
                 M3U8Setting load = JsonConvert.DeserializeObject<M3U8Setting>(File.ReadAllText(path));
                 Sync = load.Sync;
+                Cache = load.Cache;
                 Input = load.Input;
                 MasterName = load.MasterName;
                 Type = load.Type;
                 ListSize = load.ListSize;
+                HLSInitTime = load.HLSInitTime;
+                HLSTime = load.HLSTime;
+                StartTime = load.StartTime;
+                FKeyframe = load.FKeyframe;
                 DeleteFlag = load.DeleteFlag;
                 AppendFlag = load.AppendFlag;
+                IndenFlag = load.IndenFlag;
+                SplitFlag = load.SplitFlag;
                 MuxingQueue = load.MuxingQueue;
                 OutputM3U8FileName = load.OutputM3U8FileName;
                 OutputSegmentFileName = load.OutputSegmentFileName;
@@ -200,10 +293,15 @@ namespace Funique
                 if (Wall_Clock)
                 {
                     args.Add("-use_wallclock_as_timestamps");
-                    args.Add("-1");
+                    args.Add("1");
                 }
                 args.Add("-i");
                 args.Add($"\"{Input}\"");
+                if(FKeyframe > 0)
+                {
+                    args.Add("-force_key_frames");
+                    args.Add($"\"expr: gte(t, n_forced * {FKeyframe})\"");
+                }
                 for(int i = 0; i < SettingCount; i++)
                 {
                     args.Add("-map");
@@ -240,13 +338,34 @@ namespace Funique
                 args.Add(MasterName);
                 args.Add("-f");
                 args.Add("hls");
+                if(StartTime > 0)
+                {
+                    args.Add("-hls_start_number_source");
+                    args.Add(StartTime.ToString());
+                }
+                args.Add("-hls_allow_cache");
+                args.Add((Cache ? 1 : 0).ToString());
+                args.Add("-hls_init_time");
+                args.Add(HLSInitTime.ToString());
+                args.Add("-hls_time");
+                args.Add(HLSTime.ToString());
                 args.Add("-hls_segment_type");
                 args.Add(HLSTypeUtility.HLSTypeDict[Type]);
-                args.Add("-hls_list_size");
-                args.Add($"{ListSize}");
+                if(PlaylistType != HLSPlaylistType.None)
+                {
+                    args.Add("-hls_playlist_type");
+                    args.Add(HLSTypeUtility.HLSPlaylistTypeDict[PlaylistType]);
+                }
+                if(ListSize != 0)
+                {
+                    args.Add("-hls_list_size");
+                    args.Add($"{ListSize}");
+                }
                 buffer.Clear();
                 if (DeleteFlag) buffer.Add("delete_segments");
                 if (AppendFlag) buffer.Add("append_list");
+                if (IndenFlag) buffer.Add("independent_segments");
+                if (SplitFlag) buffer.Add("split_by_time");
                 if(buffer.Count > 0)
                 {
                     args.Add("-hls_flags");
