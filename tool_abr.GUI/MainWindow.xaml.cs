@@ -168,6 +168,7 @@ namespace Funique.GUI
             ctx.Setting.MasterName = "master.m3u8";
             ctx.Setting.ListSize = 6;
             ctx.Setting.Type = HLSType.FMP4;
+            ctx.Setting.PlaylistType = HLSPlaylistType.VOD;
             ctx.Setting.DeleteFlag = true;
             ctx.Setting.AppendFlag = true;
             ctx.Setting.MuxingQueue = 99999;
