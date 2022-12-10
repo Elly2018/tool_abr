@@ -2,6 +2,12 @@
 
 namespace Funique
 {
+    public enum TranscodeType
+    {
+        HLS,
+        DASH
+    }
+
     public enum HLSType
     {
         MPEG,
@@ -17,6 +23,12 @@ namespace Funique
 
     public static class HLSTypeUtility
     {
+        public static Dictionary<TranscodeType, string> TranscodeTypeDict = new Dictionary<Funique.TranscodeType, string>()
+        {
+            { TranscodeType.HLS, "hls" },
+            { TranscodeType.DASH, "dash" },
+        };
+
         public static Dictionary<HLSType, string> HLSTypeDict = new Dictionary<Funique.HLSType, string>()
         {
             { HLSType.MPEG, "mpegts" },

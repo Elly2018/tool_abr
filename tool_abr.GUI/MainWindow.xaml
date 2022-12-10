@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Width="{Binding WindowWidth, Mode=TwoWay}"
         Loaded="Window_Loaded"
-        Title="Clipping Master" MinHeight="800" MinWidth="600" Style="{DynamicResource CustomWindowStyle}">
+        Title="Clipping Master" MinHeight="850" MinWidth="600" Style="{DynamicResource CustomWindowStyle}">
     <Window.DataContext>
         <local:WindowDataContext />
     </Window.DataContext>
