@@ -268,10 +268,11 @@ namespace Funique
                 IndenFlag = load.IndenFlag;
                 SplitFlag = load.SplitFlag;
                 MuxingQueue = load.MuxingQueue;
+                PlaylistType = load.PlaylistType;
                 OutputM3U8FileName = load.OutputM3U8FileName;
                 OutputSegmentFileName = load.OutputSegmentFileName;
                 Settings = load.Settings;
-            } 
+            }
             catch(Exception ex)
             {
                 Debug.WriteLine($"{ex.Message}\n{ex.StackTrace}");
@@ -284,6 +285,7 @@ namespace Funique
             {
                 List<string> args = new List<string>();
                 int SettingCount = Settings.Count;
+                args.Add("-hide_banner");
                 if (Sync) args.Add("-re");
                 if (StreamingLoop)
                 {
@@ -321,10 +323,29 @@ namespace Funique
                     args.Add(string.IsNullOrEmpty(target.VideoCodec) ? "copy" : target.VideoCodec);
                     args.Add($"-c:a:{i}");
                     args.Add(string.IsNullOrEmpty(target.AudioCodec) ? "copy" : target.AudioCodec);
-                    if(target.BitRate != 0)
+                    if(target.MaxRate != 0)
                     {
-                        args.Add($"-b:v:{i}");
-                        args.Add($"{target.BitRate}k");
+                        if (target.VideoCodec.Contains("nvenc"))
+                        {
+                            args.Add($"-rc");
+                            args.Add($"constqp");
+                        }
+                        args.Add($"-crf:{i}");
+                        args.Add($"{target.CRF}");
+                        if (target.VideoCodec == "libx265")
+                        {
+                            args.Add($"-x265-params");
+                            args.Add($"\"vbv-maxrate={target.MaxRate}:vbv-bufsize={target.MaxRate * 2}:bitrate={target.MaxRate}\"");
+                        }
+                        else
+                        {
+                            args.Add($"-maxrate:{i}");
+                            args.Add($"{target.MaxRate}k");
+                            args.Add($"-bufsize:{i}");
+                            args.Add($"{target.MaxRate * 2}k");
+                            args.Add($"-b:v:{i}");
+                            args.Add($"{target.MaxRate}k");
+                        }
                     }
                 }
                 args.Add("-var_stream_map");

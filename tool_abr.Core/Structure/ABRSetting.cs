@@ -12,6 +12,7 @@ namespace Funique
         string _VideoCodec;
         string _AudioCodec;
         int _BitRate;
+        int _CRF;
 
         [JsonProperty] public string Name
         {
@@ -58,7 +59,7 @@ namespace Funique
             }
             get => _AudioCodec;
         }
-        [JsonProperty] public int BitRate
+        [JsonProperty] public int MaxRate
         {
             set
             {
@@ -66,6 +67,16 @@ namespace Funique
                 OnPropertyChanged("BitRate");
             }
             get => _BitRate;
+        }
+        [JsonProperty]
+        public int CRF
+        {
+            set
+            {
+                _CRF = value;
+                OnPropertyChanged("CRF");
+            }
+            get => _CRF;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
