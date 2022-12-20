@@ -131,19 +131,20 @@
             <Label Content="Input" Grid.Column="0" Grid.Row="4" />
             <Label Content="Master Name" Grid.Column="0" Grid.Row="5" />
             <Label Content="Type" Grid.Column="0" Grid.Row="6" />
-            <Label Content="ListSize" Grid.Column="0" Grid.Row="7" />
-            <Label Content="HLS Init Time" Grid.Column="0" Grid.Row="8" />
-            <Label Content="HLS Time" Grid.Column="0" Grid.Row="9" />
-            <Label Content="Start time" Grid.Column="0" Grid.Row="10" />
-            <Label Content="Force keyframe" Grid.Column="0" Grid.Row="11" />
-            <Label Content="Playlist Type" Grid.Column="0" Grid.Row="12" />
-            <Label Content="DeleteFlag" Grid.Column="0" Grid.Row="13" />
-            <Label Content="AppendFlag" Grid.Column="0" Grid.Row="14" />
-            <Label Content="IndenFlag" Grid.Column="0" Grid.Row="15" />
-            <Label Content="SplitFlag" Grid.Column="0" Grid.Row="16" />
-            <Label Content="MuxingQueue" Grid.Column="0" Grid.Row="17" />
-            <Label Content="Output M3U8" Grid.Column="0" Grid.Row="18" />
-            <Label Content="Output Segment" Grid.Column="0" Grid.Row="19" />
+            <Label Content="HWAccel" Grid.Column="0" Grid.Row="7" />
+            <Label Content="ListSize" Grid.Column="0" Grid.Row="8" />
+            <Label Content="HLS Init Time" Grid.Column="0" Grid.Row="9" />
+            <Label Content="HLS Time" Grid.Column="0" Grid.Row="10" />
+            <Label Content="Start time" Grid.Column="0" Grid.Row="11" />
+            <Label Content="Force keyframe" Grid.Column="0" Grid.Row="12" />
+            <Label Content="Playlist Type" Grid.Column="0" Grid.Row="13" />
+            <Label Content="DeleteFlag" Grid.Column="0" Grid.Row="14" />
+            <Label Content="AppendFlag" Grid.Column="0" Grid.Row="15" />
+            <Label Content="IndenFlag" Grid.Column="0" Grid.Row="16" />
+            <Label Content="SplitFlag" Grid.Column="0" Grid.Row="17" />
+            <Label Content="MuxingQueue" Grid.Column="0" Grid.Row="18" />
+            <Label Content="Output M3U8" Grid.Column="0" Grid.Row="19" />
+            <Label Content="Output Segment" Grid.Column="0" Grid.Row="20" />
 
             <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding Sync}" Grid.Column="1" Grid.Row="0" />
             <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding StreamingLoop}" Grid.Column="1" Grid.Row="1" />
@@ -152,19 +153,20 @@
             <TextBox Text="{Binding Input}" Grid.Column="1" Grid.Row="4" />
             <TextBox Text="{Binding MasterName}" Grid.Column="1" Grid.Row="5" />
             <ComboBox Grid.Column="1" Grid.Row="6" ItemsSource="{Binding HLSTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Type}" />
-            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding ListSize}" Grid.Column="1" Grid.Row="7" />
-            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding HLSInitTime}" Grid.Column="1" Grid.Row="8" />
-            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding HLSTime}" Grid.Column="1" Grid.Row="9" />
-            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding StartTime}" Grid.Column="1" Grid.Row="10" />
-            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding FKeyframe}" Grid.Column="1" Grid.Row="11" />
-            <ComboBox Grid.Column="1" Grid.Row="12" ItemsSource="{Binding HLSPlaylistTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding PlaylistType}" />
-            <CheckBox IsChecked="{Binding DeleteFlag}" Grid.Column="1" Grid.Row="13" />
-            <CheckBox IsChecked="{Binding AppendFlag}" Grid.Column="1" Grid.Row="14" />
-            <CheckBox IsChecked="{Binding IndenFlag}" Grid.Column="1" Grid.Row="15" />
-            <CheckBox IsChecked="{Binding SplitFlag}" Grid.Column="1" Grid.Row="16" />
-            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding MuxingQueue}" Grid.Column="1" Grid.Row="17" />
-            <TextBox Text="{Binding OutputM3U8FileName}" Grid.Column="1" Grid.Row="18" />
-            <TextBox Text="{Binding OutputSegmentFileName}" Grid.Column="1" Grid.Row="19" />
+            <ComboBox Grid.Column="1" Grid.Row="7" ItemsSource="{Binding HWAccelTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding HWAccelType}" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding ListSize}" Grid.Column="1" Grid.Row="8" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding HLSInitTime}" Grid.Column="1" Grid.Row="9" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding HLSTime}" Grid.Column="1" Grid.Row="10" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding StartTime}" Grid.Column="1" Grid.Row="11" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding FKeyframe}" Grid.Column="1" Grid.Row="12" />
+            <ComboBox Grid.Column="1" Grid.Row="13" ItemsSource="{Binding HLSPlaylistTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding PlaylistType}" />
+            <CheckBox IsChecked="{Binding DeleteFlag}" Grid.Column="1" Grid.Row="14" />
+            <CheckBox IsChecked="{Binding AppendFlag}" Grid.Column="1" Grid.Row="15" />
+            <CheckBox IsChecked="{Binding IndenFlag}" Grid.Column="1" Grid.Row="16" />
+            <CheckBox IsChecked="{Binding SplitFlag}" Grid.Column="1" Grid.Row="17" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding MuxingQueue}" Grid.Column="1" Grid.Row="18" />
+            <TextBox Text="{Binding OutputM3U8FileName}" Grid.Column="1" Grid.Row="19" />
+            <TextBox Text="{Binding OutputSegmentFileName}" Grid.Column="1" Grid.Row="20" />
         </Grid>
         <Button Name="RunButton" Content="RUN" Grid.Row="4" Click="RunButton_Click" />
     </Grid>

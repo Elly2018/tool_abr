@@ -14,6 +14,17 @@ namespace Funique
         FMP4
     }
 
+    public enum HWAccelType
+    {
+        None,
+        CUDA,
+        CUVID,
+        DRM,
+        DXVA2,
+        QSV,
+        D3D11VA
+    }
+
     public enum HLSPlaylistType
     {
         None,
@@ -33,6 +44,17 @@ namespace Funique
         {
             { HLSType.MPEG, "mpegts" },
             { HLSType.FMP4, "fmp4" },
+        };
+
+        public static Dictionary<HWAccelType, string> HWAccelTypeDict = new Dictionary<Funique.HWAccelType, string>()
+        {
+            { HWAccelType.None, "none" },
+            { HWAccelType.CUDA, "cuda" },
+            { HWAccelType.CUVID, "cuvid" },
+            { HWAccelType.DRM, "drm" },
+            { HWAccelType.DXVA2, "dxva2" },
+            { HWAccelType.QSV, "qsv" },
+            { HWAccelType.D3D11VA, "d3d11va" },
         };
 
         public static Dictionary<HLSPlaylistType, string> HLSPlaylistTypeDict = new Dictionary<Funique.HLSPlaylistType, string>()

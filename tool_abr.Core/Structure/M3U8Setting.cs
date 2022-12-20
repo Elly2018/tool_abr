@@ -12,6 +12,7 @@ namespace Funique
     public sealed class M3U8Setting : INotifyPropertyChanged
     {
         [JsonIgnore] public Dictionary<HLSType, string> HLSTypeDict => HLSTypeUtility.HLSTypeDict;
+        [JsonIgnore] public Dictionary<HWAccelType, string> HWAccelTypeDict => HLSTypeUtility.HWAccelTypeDict;
         [JsonIgnore] public Dictionary<HLSPlaylistType, string> HLSPlaylistTypeDict => HLSTypeUtility.HLSPlaylistTypeDict;
 
         bool _Sync;
@@ -21,6 +22,7 @@ namespace Funique
         string _Input;
         string _MasterName;
         int _Type;
+        int _HWAccelType;
         int _ListSize;
         int _HLSInitTime;
         int _HLSTime;
@@ -102,6 +104,16 @@ namespace Funique
                 OnPropertyChanged("Type");
             }
             get => (HLSType)_Type;
+        }
+        [JsonProperty]
+        public HWAccelType HWAccelType
+        {
+            set
+            {
+                _HWAccelType = (int)value;
+                OnPropertyChanged("HWAccelType");
+            }
+            get => (HWAccelType)_HWAccelType;
         }
         [JsonProperty] public int ListSize
         {
@@ -258,6 +270,7 @@ namespace Funique
                 Input = load.Input;
                 MasterName = load.MasterName;
                 Type = load.Type;
+                HWAccelType = load.HWAccelType;
                 ListSize = load.ListSize;
                 HLSInitTime = load.HLSInitTime;
                 HLSTime = load.HLSTime;
@@ -286,6 +299,11 @@ namespace Funique
                 List<string> args = new List<string>();
                 int SettingCount = Settings.Count;
                 args.Add("-hide_banner");
+                if(HWAccelType != HWAccelType.None)
+                {
+                    args.Add("-hwaccel");
+                    args.Add(HWAccelTypeDict[HWAccelType]);
+                }
                 if (Sync) args.Add("-re");
                 if (StreamingLoop)
                 {
@@ -328,13 +346,20 @@ namespace Funique
                         if (target.VideoCodec.Contains("nvenc"))
                         {
                             args.Add($"-rc");
-                            args.Add($"constqp");
+                            args.Add($"cbr");
+                            args.Add($"-cbr");
+                            args.Add($"1");
                         }
                         args.Add($"-crf:{i}");
                         args.Add($"{target.CRF}");
                         if (target.VideoCodec == "libx265")
                         {
                             args.Add($"-x265-params");
+                            args.Add($"\"vbv-maxrate={target.MaxRate}:vbv-bufsize={target.MaxRate * 2}:bitrate={target.MaxRate}\"");
+                        }
+                        else if (target.VideoCodec == "libx264")
+                        {
+                            args.Add($"-x264-params");
                             args.Add($"\"vbv-maxrate={target.MaxRate}:vbv-bufsize={target.MaxRate * 2}:bitrate={target.MaxRate}\"");
                         }
                         else
@@ -345,6 +370,11 @@ namespace Funique
                             args.Add($"{target.MaxRate * 2}k");
                             args.Add($"-b:v:{i}");
                             args.Add($"{target.MaxRate}k");
+                        }
+
+                        if(target.VideoCodec == "hevc_nvenc")
+                        {
+
                         }
                     }
                 }
