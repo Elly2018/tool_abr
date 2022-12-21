@@ -26,6 +26,7 @@ namespace Funique
                 Process proc = new Process();
                 proc.StartInfo.RedirectStandardInput = true;
                 proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardError = false;
                 proc.StartInfo.WorkingDirectory = dir == null ? Directory.GetCurrentDirectory() : dir;
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.CreateNoWindow = false;
@@ -40,6 +41,17 @@ namespace Funique
         {
             Process proc = process;
             proc.StartInfo.Arguments = setting.Arguments;
+            string path = Path.Combine(proc.StartInfo.WorkingDirectory, "command.txt");
+            if (File.Exists(path))
+            {
+                var writer = File.AppendText(path);
+                writer.WriteLine(proc.StartInfo.Arguments);
+                writer.Close();
+            }
+            else
+            {
+                File.WriteAllText(path, proc.StartInfo.Arguments);
+            }
             Debug.WriteLine(proc.StartInfo.Arguments);
             proc.Start();
         }

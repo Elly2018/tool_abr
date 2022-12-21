@@ -38,7 +38,9 @@ namespace Funique.GUI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            MasterM3U8View.DataContext = ctx.Setting;
+            MasterM3U8Input.DataContext = ctx.Setting;
+            MasterM3U8HLS.DataContext = ctx.Setting;
+            MasterM3U8Detail.DataContext = ctx.Setting;
             ModuleOptionsView.DataContext = null;
         }
 

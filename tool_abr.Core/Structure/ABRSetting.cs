@@ -13,6 +13,10 @@ namespace Funique
         string _AudioCodec;
         int _BitRate;
         int _CRF;
+        string _PixFmt;
+        string _Preset;
+        int _NOG;
+        int _Keyint;
 
         [JsonProperty] public string Name
         {
@@ -68,8 +72,7 @@ namespace Funique
             }
             get => _BitRate;
         }
-        [JsonProperty]
-        public int CRF
+        [JsonProperty] public int CRF
         {
             set
             {
@@ -77,6 +80,42 @@ namespace Funique
                 OnPropertyChanged("CRF");
             }
             get => _CRF;
+        }
+        [JsonProperty] public string PixFmt
+        {
+            set
+            {
+                _PixFmt = value;
+                OnPropertyChanged("PixFmt");
+            }
+            get => _PixFmt;
+        }
+        [JsonProperty] public string Preset
+        {
+            set
+            {
+                _Preset = value;
+                OnPropertyChanged("Preset");
+            }
+            get => _Preset;
+        }
+        [JsonProperty] public int NOG
+        {
+            set
+            {
+                _NOG = value;
+                OnPropertyChanged("NOG");
+            }
+            get => _NOG;
+        }
+        [JsonProperty] public int Keyint
+        {
+            set
+            {
+                _Keyint = value;
+                OnPropertyChanged("Keyint");
+            }
+            get => _Keyint;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

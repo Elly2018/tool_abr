@@ -15,11 +15,17 @@ namespace Funique
         [JsonIgnore] public Dictionary<HWAccelType, string> HWAccelTypeDict => HLSTypeUtility.HWAccelTypeDict;
         [JsonIgnore] public Dictionary<HLSPlaylistType, string> HLSPlaylistTypeDict => HLSTypeUtility.HLSPlaylistTypeDict;
 
+        #region Fields
         bool _Sync;
         bool _StreamingLoop;
         bool _Wall_Clock;
         bool _Cache;
+        int _StartNumber;
         string _Input;
+        string _InputAudio;
+        string _InputSubtitle;
+        string _InputFramerate;
+        bool _HaveAudio;
         string _MasterName;
         int _Type;
         int _HWAccelType;
@@ -34,12 +40,14 @@ namespace Funique
         bool _IndenFlag;
         bool _SplitFlag;
         int _MuxingQueue;
+        bool _SeperateAudio;
         string _OutputM3U8FileName;
         string _OutputSegmentFileName;
         ObservableCollection<ABRSetting> _Settings = new ObservableCollection<ABRSetting>();
+        #endregion
 
-        [JsonProperty] 
-        public bool Sync
+        #region Properties
+        [JsonProperty] public bool Sync
         {
             set
             {
@@ -48,8 +56,7 @@ namespace Funique
             }
             get => _Sync;
         }
-        [JsonProperty]
-        public bool StreamingLoop
+        [JsonProperty] public bool StreamingLoop
         {
             set
             {
@@ -58,8 +65,7 @@ namespace Funique
             }
             get => _StreamingLoop;
         }
-        [JsonProperty]
-        public bool Wall_Clock
+        [JsonProperty] public bool Wall_Clock
         {
             set
             {
@@ -68,8 +74,7 @@ namespace Funique
             }
             get => _Wall_Clock;
         }
-        [JsonProperty]
-        public bool Cache
+        [JsonProperty] public bool Cache
         {
             set
             {
@@ -77,6 +82,24 @@ namespace Funique
                 OnPropertyChanged("Cache");
             }
             get => _Cache;
+        }
+        [JsonProperty] public bool HaveAudio
+        {
+            set
+            {
+                _HaveAudio = value;
+                OnPropertyChanged("HaveAudio");
+            }
+            get => _HaveAudio;
+        }
+        [JsonProperty] public int StartNumber
+        {
+            set
+            {
+                _StartNumber = value;
+                OnPropertyChanged("StartNumber");
+            }
+            get => _StartNumber;
         }
         [JsonProperty] public string Input
         {
@@ -86,6 +109,24 @@ namespace Funique
                 OnPropertyChanged("Input");
             }
             get => _Input;
+        }
+        [JsonProperty] public string InputAudio
+        {
+            set
+            {
+                _InputAudio = value;
+                OnPropertyChanged("InputAudio");
+            }
+            get => _InputAudio;
+        }
+        [JsonProperty] public string InputSubtitle
+        {
+            set
+            {
+                _InputSubtitle = value;
+                OnPropertyChanged("InputSubtitle");
+            }
+            get => _InputSubtitle;
         }
         [JsonProperty] public string MasterName
         {
@@ -105,8 +146,7 @@ namespace Funique
             }
             get => (HLSType)_Type;
         }
-        [JsonProperty]
-        public HWAccelType HWAccelType
+        [JsonProperty] public HWAccelType HWAccelType
         {
             set
             {
@@ -124,8 +164,7 @@ namespace Funique
             }
             get => _ListSize;
         }
-        [JsonProperty]
-        public int HLSInitTime
+        [JsonProperty] public int HLSInitTime
         {
             set
             {
@@ -143,8 +182,16 @@ namespace Funique
             }
             get => _HLSTime;
         }
-        [JsonProperty]
-        public int StartTime
+        [JsonProperty] public string InputFramerate
+        {
+            set
+            {
+                _InputFramerate = value;
+                OnPropertyChanged("InputFramerate");
+            }
+            get => _InputFramerate;
+        }
+        [JsonProperty] public int StartTime
         {
             set
             {
@@ -153,8 +200,7 @@ namespace Funique
             }
             get => _StartTime;
         }
-        [JsonProperty]
-        public int FKeyframe
+        [JsonProperty] public int FKeyframe
         {
             set
             {
@@ -189,6 +235,15 @@ namespace Funique
                 OnPropertyChanged("AppendFlag");
             }
             get => _AppendFlag;
+        }
+        [JsonProperty] public bool SeperateAudio
+        {
+            set
+            {
+                _SeperateAudio = value;
+                OnPropertyChanged("SeperateAudio");
+            }
+            get => _SeperateAudio;
         }
         [JsonProperty] public bool IndenFlag
         {
@@ -244,6 +299,7 @@ namespace Funique
             }
             get => _Settings;
         }
+        #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string property)
@@ -267,7 +323,11 @@ namespace Funique
                 M3U8Setting load = JsonConvert.DeserializeObject<M3U8Setting>(File.ReadAllText(path));
                 Sync = load.Sync;
                 Cache = load.Cache;
+                InputFramerate = load.InputFramerate;
+                StartNumber = load.StartNumber;
                 Input = load.Input;
+                InputAudio = load.InputAudio;
+                InputSubtitle = load.InputSubtitle;
                 MasterName = load.MasterName;
                 Type = load.Type;
                 HWAccelType = load.HWAccelType;
@@ -281,6 +341,7 @@ namespace Funique
                 IndenFlag = load.IndenFlag;
                 SplitFlag = load.SplitFlag;
                 MuxingQueue = load.MuxingQueue;
+                SeperateAudio = load.SeperateAudio;
                 PlaylistType = load.PlaylistType;
                 OutputM3U8FileName = load.OutputM3U8FileName;
                 OutputSegmentFileName = load.OutputSegmentFileName;
@@ -315,9 +376,29 @@ namespace Funique
                     args.Add("-use_wallclock_as_timestamps");
                     args.Add("1");
                 }
+                if (!string.IsNullOrEmpty(InputFramerate))
+                {
+                    args.Add("-framerate");
+                    args.Add($"{InputFramerate}");
+                }
+                if(Input.ToLower().Contains("png") || Input.ToLower().Contains("jpg"))
+                {
+                    args.Add("-start_number");
+                    args.Add($"{StartNumber}");
+                }
                 args.Add("-i");
                 args.Add($"\"{Input}\"");
-                if(FKeyframe > 0)
+                if (!string.IsNullOrEmpty(InputAudio))
+                {
+                    args.Add("-i");
+                    args.Add($"\"{InputAudio}\"");
+                }
+                if (!string.IsNullOrEmpty(InputSubtitle))
+                {
+                    args.Add("-i");
+                    args.Add($"\"{InputSubtitle}\"");
+                }
+                if (FKeyframe > 0)
                 {
                     args.Add("-force_key_frames");
                     args.Add($"\"expr: gte(t, n_forced * {FKeyframe})\"");
@@ -326,8 +407,21 @@ namespace Funique
                 {
                     args.Add("-map");
                     args.Add("0:0");
+                }
+                if (!string.IsNullOrEmpty(InputAudio))
+                {
+                    args.Add("-map");
+                    args.Add("1:0");
+                }
+                else if (HaveAudio)
+                {
                     args.Add("-map");
                     args.Add("0:1");
+                }
+                if (!string.IsNullOrEmpty(InputSubtitle))
+                {
+                    args.Add("-map");
+                    args.Add("2:0");
                 }
                 for (int i = 0; i < SettingCount; i++)
                 {
@@ -339,8 +433,11 @@ namespace Funique
                     }
                     args.Add($"-c:v:{i}");
                     args.Add(string.IsNullOrEmpty(target.VideoCodec) ? "copy" : target.VideoCodec);
-                    args.Add($"-c:a:{i}");
-                    args.Add(string.IsNullOrEmpty(target.AudioCodec) ? "copy" : target.AudioCodec);
+                    if (HaveAudio)
+                    {
+                        //args.Add($"-c:a:{i}");
+                        //args.Add(string.IsNullOrEmpty(target.AudioCodec) ? "copy" : target.AudioCodec);
+                    }
                     if(target.MaxRate != 0)
                     {
                         if (target.VideoCodec.Contains("nvenc"))
@@ -350,17 +447,24 @@ namespace Funique
                             args.Add($"-cbr");
                             args.Add($"1");
                         }
-                        args.Add($"-crf:{i}");
-                        args.Add($"{target.CRF}");
+                        if(target.CRF != 0)
+                        {
+                            args.Add($"-crf:{i}");
+                            args.Add($"{target.CRF}");
+                        }
+                        if (!string.IsNullOrEmpty(target.Preset))
+                        {
+                            args.Add($"-preset:{i}");
+                            args.Add($"{target.Preset}");
+                        }
+                        bool use_xx_params = target.VideoCodec == "libx265" || target.VideoCodec == "libx264";
                         if (target.VideoCodec == "libx265")
                         {
                             args.Add($"-x265-params");
-                            args.Add($"\"vbv-maxrate={target.MaxRate}:vbv-bufsize={target.MaxRate * 2}:bitrate={target.MaxRate}\"");
                         }
                         else if (target.VideoCodec == "libx264")
                         {
                             args.Add($"-x264-params");
-                            args.Add($"\"vbv-maxrate={target.MaxRate}:vbv-bufsize={target.MaxRate * 2}:bitrate={target.MaxRate}\"");
                         }
                         else
                         {
@@ -372,17 +476,43 @@ namespace Funique
                             args.Add($"{target.MaxRate}k");
                         }
 
+                        if (use_xx_params)
+                        {
+                            string a = $"vbv-maxrate={target.MaxRate}:vbv-bufsize={target.MaxRate * 2}:bitrate={target.MaxRate}";
+                            if (target.NOG != 0) a = $"no-open-gop:${target.NOG}:" + a;
+                            if (target.Keyint != 0) a = $"keyint:${target.Keyint}:" + a;
+                            args.Add($"\"{a}\"");
+                        }
+
                         if(target.VideoCodec == "hevc_nvenc")
                         {
 
                         }
                     }
                 }
+                if (!string.IsNullOrEmpty(InputAudio) || HaveAudio)
+                {
+                    args.Add($"-c:a:{SettingCount}");
+                    args.Add("copy");
+                }
+                if (!string.IsNullOrEmpty(InputSubtitle))
+                {
+                    args.Add($"-c:s:{SettingCount + 1}");
+                    args.Add("ttml");
+                }
                 args.Add("-var_stream_map");
                 List<string> buffer = new List<string>();
                 for (int i = 0; i < SettingCount; i++)
                 {
-                    buffer.Add($"v:{i},a:{i}");
+                    buffer.Add($"v:{i}");
+                }
+                if (!string.IsNullOrEmpty(InputAudio) || HaveAudio)
+                {
+                    buffer.Add("a:0");
+                }
+                if (!string.IsNullOrEmpty(InputSubtitle))
+                {
+                    buffer.Add("s:0");
                 }
                 args.Add($"\"{string.Join(' ', buffer)}\"");
                 args.Add("-master_pl_name");
