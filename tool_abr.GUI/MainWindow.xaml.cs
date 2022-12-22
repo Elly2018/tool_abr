@@ -54,6 +54,11 @@ namespace Funique.GUI
             ctx.Control.Call(ctx.Setting);
         }
 
+        private void CombineButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void Addnew_Click(object sender, RoutedEventArgs e)
         {
             ctx.Setting.Settings.Add(new ABRSetting());

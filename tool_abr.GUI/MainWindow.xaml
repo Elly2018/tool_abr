@@ -17,7 +17,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="580"/>
-            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
 
         <TabControl Grid.Row="1">
@@ -122,31 +121,37 @@
                         <RowDefinition Height="23" />
                         <RowDefinition Height="23" />
                         <RowDefinition Height="23" />
+                        <RowDefinition Height="23" />
+                        <RowDefinition Height="23" />
                     </Grid.RowDefinitions>
 
                     <Label Content="Sync" Grid.Column="0" Grid.Row="0" />
                     <Label Content="Stream Loop" Grid.Column="0" Grid.Row="1" />
                     <Label Content="Use Wall Clock" Grid.Column="0" Grid.Row="2" />
                     <Label Content="Cache" Grid.Column="0" Grid.Row="3" />
-                    <Label Content="Framerate" Grid.Column="0" Grid.Row="4" />
-                    <Label Content="Start Number" Grid.Column="0" Grid.Row="5" />
-                    <Label Content="Main Input" Grid.Column="0" Grid.Row="6" />
-                    <Label Content="Audio Input" Grid.Column="0" Grid.Row="7" />
-                    <Label Content="Subtitle Input" Grid.Column="0" Grid.Row="8" />
-                    <Label Content="Have Audio" Grid.Column="0" Grid.Row="9" />
-                    <Label Content="HWAccel" Grid.Column="0" Grid.Row="10" />
+                    <Label Content="Input Framerate" Grid.Column="0" Grid.Row="4" />
+                    <Label Content="Output Framerate" Grid.Column="0" Grid.Row="5" />
+                    <Label Content="Start Number" Grid.Column="0" Grid.Row="6" />
+                    <Label Content="Total Frame" Grid.Column="0" Grid.Row="7" />
+                    <Label Content="Main Input" Grid.Column="0" Grid.Row="8" />
+                    <Label Content="Audio Input" Grid.Column="0" Grid.Row="9" />
+                    <Label Content="Subtitle Input" Grid.Column="0" Grid.Row="10" />
+                    <Label Content="Have Audio" Grid.Column="0" Grid.Row="11" />
+                    <Label Content="HWAccel" Grid.Column="0" Grid.Row="12" />
 
                     <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding Sync}" Grid.Column="1" Grid.Row="0" />
-                    <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding StreamingLoop}" Grid.Column="1" Grid.Row="1" />
+                    <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding StreamingLoop}" Grid.Column="1" Grid.Row="1" />
                     <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding Wall_Clock}" Grid.Column="1" Grid.Row="2" />
                     <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding Cache}" Grid.Column="1" Grid.Row="3" />
                     <TextBox Text="{Binding InputFramerate}" Grid.Column="1" Grid.Row="4" />
-                    <TextBox Text="{Binding StartNumber}" Grid.Column="1" Grid.Row="5" />
-                    <TextBox Text="{Binding Input}" Grid.Column="1" Grid.Row="6" />
-                    <TextBox Text="{Binding InputAudio}" Grid.Column="1" Grid.Row="7" />
-                    <TextBox Text="{Binding InputSubtitle}" Grid.Column="1" Grid.Row="8" />
-                    <CheckBox IsChecked="{Binding HaveAudio}" Grid.Column="1" Grid.Row="9" />
-                    <ComboBox Grid.Column="1" Grid.Row="10" ItemsSource="{Binding HWAccelTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding HWAccelType}" />
+                    <TextBox Text="{Binding OutputFramerate}" Grid.Column="1" Grid.Row="5" />
+                    <TextBox Text="{Binding StartNumber}" Grid.Column="1" Grid.Row="6" />
+                    <TextBox Text="{Binding VFrame}" Grid.Column="1" Grid.Row="7" />
+                    <TextBox Text="{Binding Input}" Grid.Column="1" Grid.Row="8" />
+                    <TextBox Text="{Binding InputAudio}" Grid.Column="1" Grid.Row="9" />
+                    <TextBox Text="{Binding InputSubtitle}" Grid.Column="1" Grid.Row="10" />
+                    <CheckBox IsChecked="{Binding HaveAudio}" Grid.Column="1" Grid.Row="11" />
+                    <ComboBox Grid.Column="1" Grid.Row="12" ItemsSource="{Binding HWAccelTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding HWAccelType}" />
                 </Grid>
             </TabItem>
             <TabItem Header="HLS">
@@ -231,6 +236,12 @@
                     <CheckBox IsChecked="{Binding SeperateAudio}" Grid.Column="1" Grid.Row="2" />
                 </Grid>
             </TabItem>
+            <TabItem Header="Action">
+                <StackPanel>
+                    <Button Name="RunButton" Content="RUN" Grid.Row="3" Click="RunButton_Click" />
+                    <Button Name="CombineButton" Content="RUN" Grid.Row="3" Click="CombineButton_Click" />
+                </StackPanel>
+            </TabItem>
         </TabControl>
 
         <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="10">
@@ -244,7 +255,5 @@
                 <MenuItem Name="Exit" Padding="3" Header="Exit" Click="Exit_Click" />
             </MenuItem>
         </Menu>
-        
-        <Button Name="RunButton" Content="RUN" Grid.Row="3" Click="RunButton_Click" />
     </Grid>
 </Window>

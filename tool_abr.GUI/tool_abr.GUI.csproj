@@ -6,6 +6,8 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>Funique.GUI</RootNamespace>
     <AssemblyName>Funique.GUI</AssemblyName>
+    <ApplicationIcon>icons8-streaming-64.ico</ApplicationIcon>
+    <Win32Resource />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
