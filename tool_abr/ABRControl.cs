@@ -3,6 +3,8 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using System.Threading;
 
 namespace Funique
 {
@@ -19,6 +21,7 @@ namespace Funique
         static ABRControl _Instance;
 
         string dir = null;
+        string workdir => dir == null ? Directory.GetCurrentDirectory() : dir;
         Process process
         {
             get
@@ -27,8 +30,8 @@ namespace Funique
                 //proc.StartInfo.RedirectStandardInput = true;
                 //proc.StartInfo.RedirectStandardOutput = true;
                 //proc.StartInfo.RedirectStandardError = true;
-                proc.EnableRaisingEvents = true;
-                proc.StartInfo.WorkingDirectory = dir == null ? Directory.GetCurrentDirectory() : dir;
+                //proc.EnableRaisingEvents = true;
+                proc.StartInfo.WorkingDirectory = workdir;
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.CreateNoWindow = false;
                 proc.StartInfo.FileName = "ffmpeg";
@@ -36,60 +39,104 @@ namespace Funique
             }
         }
 
-        Process proc;
+        Process proc = null;
+        Thread thread = null;
+        Queue<string> jobs = new Queue<string>();
 
         public void SetDirectory(string dir) => this.dir = dir;
 
         public void Call(M3U8Setting setting)
         {
-            if (proc != null && !proc.HasExited) return;
-            proc = process;
-            proc.StartInfo.Arguments = setting.Arguments;
-            string path = Path.Combine(proc.StartInfo.WorkingDirectory, "command.txt");
+            Kill();
+            string[] args = setting.Arguments;
+            foreach (var i in args) jobs.Enqueue(i);
+            WriteCommand(args);
+            if(thread != null)
+            {
+                thread.Interrupt();
+            }
+            thread = new Thread(BackgroundRunning);
+            thread.Start();
+        }
+        public void Kill()
+        {
+            jobs.Clear();
+            if (thread != null)
+                thread.Interrupt();
+            if (proc != null)
+                proc.Kill();
+        }
+        void WriteCommand(string[] args)
+        {
+            string path = Path.Combine(workdir, "command.txt");
+            string message = DateTime.UtcNow.ToString();
+            message += "\n";
+            foreach (var i in args) message += i;
+            message += "\n";
             if (File.Exists(path))
             {
                 var writer = File.AppendText(path);
-                writer.WriteLine(proc.StartInfo.Arguments);
+                writer.WriteLine(message);
                 writer.Close();
             }
             else
             {
-                File.WriteAllText(path, proc.StartInfo.Arguments);
+                File.WriteAllText(path, message);
             }
-            Debug.WriteLine(proc.StartInfo.Arguments);
-            proc.ErrorDataReceived += Proc_ErrorDataReceived;
-            proc.OutputDataReceived += Proc_ErrorDataReceived;
-            proc.Exited += Proc_Exited;
-            proc.Start();
+        }
+        void BackgroundRunning()
+        {
+            string args = string.Empty;
+            while (jobs.TryDequeue(out args))
+            {
+                Debug.WriteLine(args);
+                proc = process;
+                try
+                {
+                    proc.StartInfo.Arguments = args;
+                    proc.ErrorDataReceived += Proc_ErrorDataReceived;
+                    proc.OutputDataReceived += Proc_ErrorDataReceived;
+                    proc.Exited += Proc_Exited;
+                    proc.Start();
+                    proc.WaitForExit();
+                    proc.Dispose();
+                }
+                catch(ThreadInterruptedException ex)
+                {
+                    proc.Kill();
+                    Debug.WriteLine(ex.Message);
+                }
+            }
         }
 
         private void Proc_Exited(object sender, System.EventArgs e)
         {
             string path = Path.Combine(proc.StartInfo.WorkingDirectory, "log.txt");
+            string message = e.ToString();
             if (File.Exists(path))
             {
                 var writer = File.AppendText(path);
-                writer.WriteLine(e.ToString());
+                writer.WriteLine(message);
                 writer.Close();
             }
             else
             {
-                File.WriteAllText(path, e.ToString());
+                File.WriteAllText(path, message);
             }
         }
-
         private void Proc_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
             string path = Path.Combine(proc.StartInfo.WorkingDirectory, "log.txt");
+            string message = e.Data.ToString();
             if (File.Exists(path))
             {
                 var writer = File.AppendText(path);
-                writer.WriteLine(e.Data.ToString());
+                writer.WriteLine(message);
                 writer.Close();
             }
             else
             {
-                File.WriteAllText(path, e.Data.ToString());
+                File.WriteAllText(path, message);
             }
         }
     }

@@ -9,11 +9,12 @@ using Newtonsoft.Json;
 namespace Funique
 {
     [System.Serializable]
-    public sealed class M3U8Setting : INotifyPropertyChanged
+    public sealed partial class M3U8Setting : INotifyPropertyChanged
     {
         [JsonIgnore] public Dictionary<HLSType, string> HLSTypeDict => HLSTypeUtility.HLSTypeDict;
         [JsonIgnore] public Dictionary<HWAccelType, string> HWAccelTypeDict => HLSTypeUtility.HWAccelTypeDict;
         [JsonIgnore] public Dictionary<HLSPlaylistType, string> HLSPlaylistTypeDict => HLSTypeUtility.HLSPlaylistTypeDict;
+        [JsonIgnore] public Dictionary<AudioSourceType, string> AudioSourceTypeDict => HLSTypeUtility.AudioSourceTypeDict;
 
         #region Fields
         bool _Sync;
@@ -43,8 +44,15 @@ namespace Funique
         bool _SplitFlag;
         int _MuxingQueue;
         bool _SeperateAudio;
+        int _AudioSource;
+        string _AudioCodec;
+        string _SubtitleCodec;
         string _OutputM3U8FileName;
+        string _OutputAudioM3U8FileName;
+        string _OutputSubtitleM3U8FileName;
         string _OutputSegmentFileName;
+        string _OutputAudioSegmentFileName;
+        string _OutputSubtitleSegmentFileName;
         ObservableCollection<ABRSetting> _Settings = new ObservableCollection<ABRSetting>();
         #endregion
 
@@ -265,6 +273,33 @@ namespace Funique
             }
             get => _SeperateAudio;
         }
+        [JsonProperty] public AudioSourceType AudioSource
+        {
+            set
+            {
+                _AudioSource = (int)value;
+                OnPropertyChanged("AudioSource");
+            }
+            get => (AudioSourceType)_AudioSource;
+        }
+        [JsonProperty] public string AudioCodec
+        {
+            set
+            {
+                _AudioCodec = value;
+                OnPropertyChanged("AudioCodec");
+            }
+            get => _AudioCodec;
+        }
+        [JsonProperty] public string SubtitleCodec
+        {
+            set
+            {
+                _SubtitleCodec = value;
+                OnPropertyChanged("SubtitleCodec");
+            }
+            get => _SubtitleCodec;
+        }
         [JsonProperty] public bool IndenFlag
         {
             set
@@ -301,6 +336,24 @@ namespace Funique
             }
             get => _OutputM3U8FileName;
         }
+        [JsonProperty] public string OutputAudioM3U8FileName
+        {
+            set
+            {
+                _OutputAudioM3U8FileName = value;
+                OnPropertyChanged("OutputAudioM3U8FileName");
+            }
+            get => _OutputAudioM3U8FileName;
+        }
+        [JsonProperty] public string OutputSubtitleM3U8FileName
+        {
+            set
+            {
+                _OutputSubtitleM3U8FileName = value;
+                OnPropertyChanged("OutputSubtitleM3U8FileName");
+            }
+            get => _OutputSubtitleM3U8FileName;
+        }
         [JsonProperty] public string OutputSegmentFileName
         {
             set
@@ -309,6 +362,24 @@ namespace Funique
                 OnPropertyChanged("OutputSegmentFileName");
             }
             get => _OutputSegmentFileName;
+        }
+        [JsonProperty] public string OutputAudioSegmentFileName
+        {
+            set
+            {
+                _OutputAudioSegmentFileName = value;
+                OnPropertyChanged("OutputAudioSegmentFileName");
+            }
+            get => _OutputAudioSegmentFileName;
+        }
+        [JsonProperty] public string OutputSubtitleSegmentFileName
+        {
+            set
+            {
+                _OutputSubtitleSegmentFileName = value;
+                OnPropertyChanged("OutputSubtitleSegmentFileName");
+            }
+            get => _OutputSubtitleSegmentFileName;
         }
         [JsonProperty] public ObservableCollection<ABRSetting> Settings
         {
@@ -363,9 +434,16 @@ namespace Funique
                 SplitFlag = load.SplitFlag;
                 MuxingQueue = load.MuxingQueue;
                 SeperateAudio = load.SeperateAudio;
+                AudioSource = load.AudioSource;
                 PlaylistType = load.PlaylistType;
+                AudioCodec = load.AudioCodec;
+                SubtitleCodec = load.SubtitleCodec;
                 OutputM3U8FileName = load.OutputM3U8FileName;
+                OutputAudioM3U8FileName = load.OutputAudioM3U8FileName;
+                OutputSubtitleM3U8FileName = load.OutputSubtitleM3U8FileName;
                 OutputSegmentFileName = load.OutputSegmentFileName;
+                OutputAudioSegmentFileName = load.OutputAudioSegmentFileName;
+                OutputSubtitleSegmentFileName = load.OutputSubtitleSegmentFileName;
                 Settings = load.Settings;
             }
             catch(Exception ex)
@@ -374,24 +452,71 @@ namespace Funique
             }
         }
 
-        [JsonIgnore] public string Arguments
+        [JsonIgnore] public string[] Arguments
         {
             get
             {
+                List<string> result = new List<string>();
                 List<string> args = new List<string>();
                 List<string> buffer = new List<string>();
                 int SettingCount = Settings.Count;
-                Prefix(args);
-                FileInput(args);
-                MapLayout(args, SettingCount);
-                ProfileSetup(args, SettingCount);
-                HLSMapLayout(args, buffer, SettingCount);
-                HLSConfig(args, buffer);
-                return string.Join(' ', args);
+
+                // First pass: Main HLS stream
+                if (NeedPass(1))
+                {
+                    P1_Prefix(args);
+                    P1_FileInput(args);
+                    P1_MapLayout(args, SettingCount);
+                    P1_ProfileSetup(args, SettingCount);
+                    P1_HLSMapLayout(args, buffer, SettingCount);
+                    P1_HLSConfig(args, buffer);
+                    result.Add(string.Join(' ', args));
+                    args.Clear();
+                }
+
+                // Second pass: Audio seperation
+                if (NeedPass(2))
+                {
+                    P2_Prefix(args);
+                    P2_FileInput(args);
+                    P2_HLSConfig(args);
+                    result.Add(string.Join(' ', args));
+                    args.Clear();
+                }
+
+                // Third pass: Subtitle seperation
+                if (NeedPass(3))
+                {
+                    P3_Prefix(args);
+                    P3_FileInput(args);
+                    P3_HLSConfig(args);
+                    result.Add(string.Join(' ', args));
+                    args.Clear();
+                }
+                return result.ToArray();
             }
         }
 
-        void Prefix(List<string> args)
+        bool NeedPass(int pass)
+        {
+            if (pass == 1) return true;
+            else if (pass == 2)
+            {
+                if (SeperateAudio)
+                {
+                    if(AudioSource == AudioSourceType.None || 
+                        (AudioSource == AudioSourceType.FromFile && string.IsNullOrEmpty(InputAudio)))
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
+            else if (!string.IsNullOrEmpty(InputSubtitle) && pass == 3) return true;
+            return false;
+        }
+        void Commom_Prefix(List<string> args)
         {
             args.Add("-loglevel");
             args.Add("repeat+level+verbose");
@@ -403,217 +528,19 @@ namespace Funique
                 args.Add(HWAccelTypeDict[HWAccelType]);
             }
             if (Sync) args.Add("-re");
-            args.Add("-stream_loop");
-            args.Add($"{StreamingLoop}");
             if (Wall_Clock)
             {
                 args.Add("-use_wallclock_as_timestamps");
                 args.Add("1");
             }
         }
-        void FileInput(List<string> args)
+        void AudioSeperation(List<string> args, int SettingCount)
         {
-            if (!string.IsNullOrEmpty(InputFramerate))
-            {
-                args.Add("-framerate");
-                args.Add($"{InputFramerate}");
-            }
-            if (Input.ToLower().Contains("png") || Input.ToLower().Contains("jpg"))
-            {
-                args.Add("-start_number");
-                args.Add($"{StartNumber}");
-            }
-            args.Add("-i");
-            args.Add($"\"{Input}\"");
-            if (!string.IsNullOrEmpty(InputAudio))
-            {
-                args.Add("-i");
-                args.Add($"\"{InputAudio}\"");
-            }
-            if (!string.IsNullOrEmpty(InputSubtitle))
-            {
-                args.Add("-i");
-                args.Add($"\"{InputSubtitle}\"");
-            }
-            if (!string.IsNullOrEmpty(OutputFramerate))
-            {
-                args.Add("-framerate");
-                args.Add($"{OutputFramerate}");
-            }
-            if (VFrame != 0)
-            {
-                args.Add("-vframes");
-                args.Add($"{VFrame}");
-            }
-        }
-        void MapLayout(List<string> args, int SettingCount)
-        {
-            if (FKeyframe > 0)
-            {
-                args.Add("-force_key_frames");
-                args.Add($"\"expr: gte(t, n_forced * {FKeyframe})\"");
-            }
-            for (int i = 0; i < SettingCount; i++)
-            {
-                args.Add("-map");
-                args.Add("0:0");
-                if (!string.IsNullOrEmpty(InputAudio))
-                {
-                    args.Add("-map");
-                    args.Add("1:0");
-                }
-                else if (HaveAudio)
-                {
-                    args.Add("-map");
-                    args.Add("0:1");
-                }
-            }
-            if (!string.IsNullOrEmpty(InputSubtitle))
-            {
-                args.Add("-map");
-                args.Add("2:0");
-            }
-        }
-        void ProfileSetup(List<string> args, int SettingCount)
-        {
-            for (int i = 0; i < SettingCount; i++)
-            {
-                ABRSetting target = Settings[i];
-                if (target.Width != 0 && target.Height != 0)
-                {
-                    args.Add($"-s:v:{i}");
-                    args.Add($"{target.Width}x{target.Height}");
-                }
-                args.Add($"-c:v:{i}");
-                args.Add(string.IsNullOrEmpty(target.VideoCodec) ? "copy" : target.VideoCodec);
-                if (target.CRF != 0)
-                {
-                    args.Add($"-crf:{i}");
-                    args.Add($"{target.CRF}");
-                }
-                if (!string.IsNullOrEmpty(target.Preset))
-                {
-                    args.Add($"-preset:{i}");
-                    args.Add($"{target.Preset}");
-                }
-                if (target.MaxRate != 0)
-                {
-                    if (target.VideoCodec.Contains("nvenc"))
-                    {
-                        args.Add($"-rc");
-                        args.Add($"cbr");
-                        args.Add($"-cbr");
-                        args.Add($"1");
-                    }
-                    bool use_xx_params = target.VideoCodec == "libx265" || target.VideoCodec == "libx264";
-                    if (target.VideoCodec == "libx265")
-                    {
-                        args.Add($"-x265-params");
-                    }
-                    else if (target.VideoCodec == "libx264")
-                    {
-                        args.Add($"-x264-params");
-                    }
-                    else
-                    {
-                        args.Add($"-maxrate:{i}k");
-                        args.Add($"{target.MaxRate}");
-                        args.Add($"-bufsize:{i}");
-                        args.Add($"{target.MaxRate * 2}k");
-                        args.Add($"-b:v:{i}");
-                        args.Add($"{target.MaxRate}k");
-                    }
 
-                    if (use_xx_params)
-                    {
-                        string a = $"vbv-maxrate={target.MaxRate}:vbv-bufsize={target.MaxRate * 2}:bitrate={target.MaxRate}";
-                        if (target.NOG != 0) a = $"no-open-gop:${target.NOG}:" + a;
-                        if (target.Keyint != 0) a = $"keyint:${target.Keyint}:" + a;
-                        args.Add($"\"{a}\"");
-                    }
-
-                    if (target.VideoCodec == "hevc_nvenc")
-                    {
-
-                    }
-                }
-                if (!string.IsNullOrEmpty(InputAudio) || HaveAudio)
-                {
-                    args.Add($"-c:a:{SettingCount}");
-                    args.Add("copy");
-                }
-            }
-            if (!string.IsNullOrEmpty(InputSubtitle))
-            {
-                args.Add($"-c:s:{SettingCount + 1}");
-                args.Add("ttml");
-            }
         }
-        void HLSMapLayout(List<string> args, List<string> buffer, int SettingCount)
+        void Seperate()
         {
-            args.Add("-var_stream_map");
-            for (int i = 0; i < SettingCount; i++)
-            {
-                if (!string.IsNullOrEmpty(InputAudio) || HaveAudio)
-                {
-                    buffer.Add($"v:{i},a:{i}");
-                }
-                else
-                {
-                    buffer.Add($"v:{i}");
-                }
-            }
-            if (!string.IsNullOrEmpty(InputSubtitle))
-            {
-                //buffer.Add("s:0");
-            }
-            args.Add($"\"{string.Join(' ', buffer)}\"");
-            buffer.Clear();
-            args.Add("-master_pl_name");
-            args.Add(MasterName);
-        }
-        void HLSConfig(List<string> args, List<string> buffer)
-        {
-            args.Add("-f");
-            args.Add("hls");
-            if (StartTime > 0)
-            {
-                args.Add("-hls_start_number_source");
-                args.Add(StartTime.ToString());
-            }
-            args.Add("-hls_allow_cache");
-            args.Add((Cache ? 1 : 0).ToString());
-            args.Add("-hls_init_time");
-            args.Add(HLSInitTime.ToString());
-            args.Add("-hls_time");
-            args.Add(HLSTime.ToString());
-            args.Add("-hls_segment_type");
-            args.Add(HLSTypeUtility.HLSTypeDict[Type]);
-            if (PlaylistType != HLSPlaylistType.None)
-            {
-                args.Add("-hls_playlist_type");
-                args.Add(HLSTypeUtility.HLSPlaylistTypeDict[PlaylistType]);
-            }
-            if (ListSize != 0)
-            {
-                args.Add("-hls_list_size");
-                args.Add($"{ListSize}");
-            }
-            if (DeleteFlag) buffer.Add("delete_segments");
-            if (AppendFlag) buffer.Add("append_list");
-            if (IndenFlag) buffer.Add("independent_segments");
-            if (SplitFlag) buffer.Add("split_by_time");
-            if (buffer.Count > 0)
-            {
-                args.Add("-hls_flags");
-                args.Add($"{string.Join('+', buffer)}");
-            }
-            buffer.Clear();
-            args.Add("-max_muxing_queue_size");
-            args.Add($"{MuxingQueue}");
-            args.Add("-hls_segment_filename");
-            args.Add($"\"{OutputSegmentFileName}\"");
-            args.Add($"\"{OutputM3U8FileName}\"");
+
         }
     }
 }

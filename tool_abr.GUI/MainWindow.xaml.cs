@@ -53,10 +53,9 @@ namespace Funique.GUI
         {
             ctx.Control.Call(ctx.Setting);
         }
-
-        private void CombineButton_Click(object sender, RoutedEventArgs e)
+        private void KillButton_Click(object sender, RoutedEventArgs e)
         {
-
+            ctx.Control.Kill();
         }
 
         private void Addnew_Click(object sender, RoutedEventArgs e)

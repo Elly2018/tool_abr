@@ -32,6 +32,13 @@ namespace Funique
         VOD
     }
 
+    public enum AudioSourceType
+    {
+        None,
+        FromVideo,
+        FromFile
+    }
+
     public static class HLSTypeUtility
     {
         public static Dictionary<TranscodeType, string> TranscodeTypeDict = new Dictionary<Funique.TranscodeType, string>()
@@ -62,6 +69,13 @@ namespace Funique
             { HLSPlaylistType.None, "none" },
             { HLSPlaylistType.EVENT, "event" },
             { HLSPlaylistType.VOD, "vod" },
+        };
+
+        public static Dictionary<AudioSourceType, string> AudioSourceTypeDict = new Dictionary<Funique.AudioSourceType, string>()
+        {
+            { AudioSourceType.None, "None" },
+            { AudioSourceType.FromVideo, "FromVideo" },
+            { AudioSourceType.FromFile, "FromFile" },
         };
     }
 }
