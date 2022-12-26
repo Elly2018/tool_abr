@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Funique.GUI"
         xmlns:core="clr-namespace:Funique;assembly=Funique.Core"
+        xmlns:pages="clr-namespace:Funique.GUI.Pages"
         mc:Ignorable="d"
         Width="{Binding WindowWidth, Mode=TwoWay}"
         Loaded="Window_Loaded"
@@ -21,247 +22,19 @@
 
         <TabControl Grid.Row="1">
             <TabItem Header="Ladder">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="100" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <ListBox Name="ModuleListView" ItemsSource="{Binding Setting.Settings}" Grid.Row="0" SelectionChanged="ModuleListView_SelectionChanged">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <ListBoxItem Content="{Binding Name}" HorizontalAlignment="Stretch" />
-                                    <StackPanel.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="MoveUp" Click="MoveUp_Click" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
-                                            <MenuItem Header="MoveDown" Click="MoveDown_Click" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
-                                            <Separator />
-                                            <MenuItem Header="Remove" Click="Removeabr_Click" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
-                                        </ContextMenu>
-                                    </StackPanel.ContextMenu>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <ListBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Add" Click="Addnew_Click"/>
-                            </ContextMenu>
-                        </ListBox.ContextMenu>
-                    </ListBox>
-                    <Grid Name="ModuleOptionsView" Grid.Row="1" Margin="8" ScrollViewer.VerticalScrollBarVisibility="Visible">
-                        <Grid.DataContext>
-                            <core:ABRSetting />
-                        </Grid.DataContext>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="80" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                        </Grid.RowDefinitions>
-
-                        <Label Content="Name" Grid.Column="0" Grid.Row="0" />
-                        <Label Content="Width" Grid.Column="0" Grid.Row="1" />
-                        <Label Content="Height" Grid.Column="0" Grid.Row="2" />
-                        <Label Content="Video Codec" Grid.Column="0" Grid.Row="3" />
-                        <Label Content="Audio Codec" Grid.Column="0" Grid.Row="4" />
-                        <Label Content="Max Bitrate" Grid.Column="0" Grid.Row="5" />
-                        <Label Content="CRF" Grid.Column="0" Grid.Row="6" />
-                        <Label Content="PixFmt" Grid.Column="0" Grid.Row="7" />
-                        <Label Content="Preset" Grid.Column="0" Grid.Row="8" />
-                        <Label Content="NOG" Grid.Column="0" Grid.Row="9" />
-                        <Label Content="Keyint" Grid.Column="0" Grid.Row="10" />
-
-                        <TextBox Text="{Binding Name}" Grid.Column="1" Grid.Row="0" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
-                        <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding Width}" Grid.Column="1" Grid.Row="1" Visibility="{Binding Path=., TargetNullValue=Collapsed }" />
-                        <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding Height}" Grid.Column="1" Grid.Row="2" Visibility="{Binding Path=., TargetNullValue=Collapsed }" />
-                        <TextBox Text="{Binding VideoCodec}" Grid.Column="1" Grid.Row="3" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
-                        <TextBox Text="{Binding AudioCodec}" Grid.Column="1" Grid.Row="4" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
-                        <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding MaxRate}" Grid.Column="1" Grid.Row="5" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
-                        <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding CRF}" Grid.Column="1" Grid.Row="6" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
-                        <TextBox Text="{Binding PixFmt}" Grid.Column="1" Grid.Row="7" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
-                        <TextBox Text="{Binding Preset}" Grid.Column="1" Grid.Row="8" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
-                        <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding NOG}" Grid.Column="1" Grid.Row="9" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
-                        <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding Keyint}" Grid.Column="1" Grid.Row="10" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
-
-                        <Label Content="k" Grid.Column="2" Grid.Row="5" />
-                    </Grid>
-                </Grid>
+                <pages:Ladder x:Name="PLadder" />
             </TabItem>
             <TabItem Header="Input">
-                <Grid Name="MasterM3U8Input" Grid.Row="1" Grid.RowSpan="10" Grid.Column="1" Margin="8" ScrollViewer.VerticalScrollBarVisibility="Visible">
-                    <Grid.DataContext>
-                        <core:M3U8Setting />
-                    </Grid.DataContext>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="80" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                    </Grid.RowDefinitions>
-
-                    <Label Content="Sync" Grid.Column="0" Grid.Row="0" />
-                    <Label Content="Stream Loop" Grid.Column="0" Grid.Row="1" />
-                    <Label Content="Use Wall Clock" Grid.Column="0" Grid.Row="2" />
-                    <Label Content="Cache" Grid.Column="0" Grid.Row="3" />
-                    <Label Content="Input Framerate" Grid.Column="0" Grid.Row="4" />
-                    <Label Content="Output Framerate" Grid.Column="0" Grid.Row="5" />
-                    <Label Content="Start Number" Grid.Column="0" Grid.Row="6" />
-                    <Label Content="Total Frame" Grid.Column="0" Grid.Row="7" />
-                    <Label Content="Main Input" Grid.Column="0" Grid.Row="8" />
-                    <Label Content="Audio Input" Grid.Column="0" Grid.Row="9" />
-                    <Label Content="Subtitle Input" Grid.Column="0" Grid.Row="10" />
-                    <Label Content="Have Audio" Grid.Column="0" Grid.Row="11" />
-                    <Label Content="HWAccel" Grid.Column="0" Grid.Row="12" />
-
-                    <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding Sync}" Grid.Column="1" Grid.Row="0" />
-                    <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding StreamingLoop}" Grid.Column="1" Grid.Row="1" />
-                    <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding Wall_Clock}" Grid.Column="1" Grid.Row="2" />
-                    <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding Cache}" Grid.Column="1" Grid.Row="3" />
-                    <TextBox Text="{Binding InputFramerate}" Grid.Column="1" Grid.Row="4" />
-                    <TextBox Text="{Binding OutputFramerate}" Grid.Column="1" Grid.Row="5" />
-                    <TextBox Text="{Binding StartNumber}" Grid.Column="1" Grid.Row="6" />
-                    <TextBox Text="{Binding VFrame}" Grid.Column="1" Grid.Row="7" />
-                    <TextBox Text="{Binding Input}" Grid.Column="1" Grid.Row="8" />
-                    <TextBox Text="{Binding InputAudio}" Grid.Column="1" Grid.Row="9" />
-                    <TextBox Text="{Binding InputSubtitle}" Grid.Column="1" Grid.Row="10" />
-                    <CheckBox IsChecked="{Binding HaveAudio}" Grid.Column="1" Grid.Row="11" />
-                    <ComboBox Grid.Column="1" Grid.Row="12" ItemsSource="{Binding HWAccelTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding HWAccelType}" />
-                </Grid>
+                <pages:Input x:Name="PInput" />
             </TabItem>
             <TabItem Header="HLS">
-                <Grid Name="MasterM3U8HLS" Grid.Row="1" Grid.RowSpan="10" Grid.Column="1" Margin="8" ScrollViewer.VerticalScrollBarVisibility="Visible">
-                    <Grid.DataContext>
-                        <core:M3U8Setting />
-                    </Grid.DataContext>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="80" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                    </Grid.RowDefinitions>
-
-                    <Label Content="Master Name" Grid.Column="0" Grid.Row="1" />
-                    <Label Content="Type" Grid.Column="0" Grid.Row="2" />
-                    <Label Content="ListSize" Grid.Column="0" Grid.Row="3" />
-                    <Label Content="HLS Init Time" Grid.Column="0" Grid.Row="4" />
-                    <Label Content="HLS Time" Grid.Column="0" Grid.Row="5" />
-                    <Label Content="Start time" Grid.Column="0" Grid.Row="6" />
-                    <Label Content="Force keyframe" Grid.Column="0" Grid.Row="7" />
-                    <Label Content="Playlist Type" Grid.Column="0" Grid.Row="8" />
-                    <Label Content="DeleteFlag" Grid.Column="0" Grid.Row="9" />
-                    <Label Content="AppendFlag" Grid.Column="0" Grid.Row="10" />
-                    <Label Content="IndenFlag" Grid.Column="0" Grid.Row="11" />
-                    <Label Content="SplitFlag" Grid.Column="0" Grid.Row="12" />
-                    <Label Content="Output M3U8" Grid.Column="0" Grid.Row="13" />
-                    <Label Content="Output Segment" Grid.Column="0" Grid.Row="14" />
-
-                    <TextBox Text="{Binding MasterName}" Grid.Column="1" Grid.Row="1" />
-                    <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding HLSTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Type}" />
-                    <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding ListSize}" Grid.Column="1" Grid.Row="3" />
-                    <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding HLSInitTime}" Grid.Column="1" Grid.Row="4" />
-                    <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding HLSTime}" Grid.Column="1" Grid.Row="5" />
-                    <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding StartTime}" Grid.Column="1" Grid.Row="6" />
-                    <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding FKeyframe}" Grid.Column="1" Grid.Row="7" />
-                    <ComboBox Grid.Column="1" Grid.Row="8" ItemsSource="{Binding HLSPlaylistTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding PlaylistType}" />
-                    <CheckBox IsChecked="{Binding DeleteFlag}" Grid.Column="1" Grid.Row="9" />
-                    <CheckBox IsChecked="{Binding AppendFlag}" Grid.Column="1" Grid.Row="10" />
-                    <CheckBox IsChecked="{Binding IndenFlag}" Grid.Column="1" Grid.Row="11" />
-                    <CheckBox IsChecked="{Binding SplitFlag}" Grid.Column="1" Grid.Row="12" />
-                    <TextBox Text="{Binding OutputM3U8FileName}" Grid.Column="1" Grid.Row="13" />
-                    <TextBox Text="{Binding OutputSegmentFileName}" Grid.Column="1" Grid.Row="14" />
-                </Grid>
+                <pages:HLS x:Name="PHLS" />
             </TabItem>
             <TabItem Header="Detail">
-                <Grid Name="MasterM3U8Detail" Grid.Row="1" Grid.RowSpan="10" Grid.Column="1" Margin="8" ScrollViewer.VerticalScrollBarVisibility="Visible">
-                    <Grid.DataContext>
-                        <core:M3U8Setting />
-                    </Grid.DataContext>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="80" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                        <RowDefinition Height="23" />
-                    </Grid.RowDefinitions>
-
-                    <Label Content="MuxingQueue" Grid.Column="0" Grid.Row="1" />
-                    <Label Content="Audio Seperate" Grid.Column="0" Grid.Row="2" />
-                    <Label Content="Audio Source" Grid.Column="0" Grid.Row="3" />
-                    <Label Content="Audio Codec" Grid.Column="0" Grid.Row="4" />
-                    <Label Content="Subtitle Codec" Grid.Column="0" Grid.Row="5" />
-                    <Label Content="Output Audio M3U8" Grid.Column="0" Grid.Row="6" />
-                    <Label Content="Output Audio Segment" Grid.Column="0" Grid.Row="7" />
-                    <Label Content="Output Subtitle M3U8" Grid.Column="0" Grid.Row="8" />
-                    <Label Content="Output Subtitle Segment" Grid.Column="0" Grid.Row="9" />
-                    
-                    <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding MuxingQueue}" Grid.Column="1" Grid.Row="1" />
-                    <CheckBox IsChecked="{Binding SeperateAudio}" Grid.Column="1" Grid.Row="2" />
-                    <ComboBox Grid.Column="1" Grid.Row="3" ItemsSource="{Binding AudioSourceTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding AudioSource}" />
-                    <TextBox Text="{Binding AudioCodec}" Grid.Column="1" Grid.Row="4" />
-                    <TextBox Text="{Binding SubtitleCodec}" Grid.Column="1" Grid.Row="5" />
-                    <TextBox Text="{Binding OutputAudioM3U8FileName}" Grid.Column="1" Grid.Row="6" />
-                    <TextBox Text="{Binding OutputAudioSegmentFileName}" Grid.Column="1" Grid.Row="7" />
-                    <TextBox Text="{Binding OutputSubtitleM3U8FileName}" Grid.Column="1" Grid.Row="8" />
-                    <TextBox Text="{Binding OutputSubtitleSegmentFileName}" Grid.Column="1" Grid.Row="9" />
-                </Grid>
+                <pages:Detail x:Name="PDetail" />
             </TabItem>
             <TabItem Header="Action">
-                <StackPanel Orientation="Vertical" Margin="5">
-                    <Button Name="RunButton" Content="RUN" Grid.Row="3" Click="RunButton_Click" />
-                    <Button Name="KillButton" Content="KILL" Grid.Row="3" Click="KillButton_Click" />
-                </StackPanel>
+                <pages:Action x:Name="PAction" />
             </TabItem>
         </TabControl>
 

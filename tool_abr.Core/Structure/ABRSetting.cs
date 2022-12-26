@@ -18,7 +18,8 @@ namespace Funique
         int _NOG;
         int _Keyint;
 
-        [JsonProperty] public string Name
+        [JsonProperty]
+        public string Name
         {
             set
             {
@@ -27,25 +28,28 @@ namespace Funique
             }
             get => _Name;
         }
-        [JsonProperty] public int Width
+        [JsonProperty]
+        public int Width
         {
-            set 
+            set
             {
                 _Width = value;
                 OnPropertyChanged("Width");
             }
             get => _Width;
         }
-        [JsonProperty] public int Height
+        [JsonProperty]
+        public int Height
         {
-            set 
+            set
             {
                 _Height = value;
                 OnPropertyChanged("Height");
             }
             get => _Height;
         }
-        [JsonProperty] public string VideoCodec
+        [JsonProperty]
+        public string VideoCodec
         {
             set
             {
@@ -54,7 +58,8 @@ namespace Funique
             }
             get => _VideoCodec;
         }
-        [JsonProperty] public string AudioCodec
+        [JsonProperty]
+        public string AudioCodec
         {
             set
             {
@@ -63,7 +68,8 @@ namespace Funique
             }
             get => _AudioCodec;
         }
-        [JsonProperty] public int MaxRate
+        [JsonProperty]
+        public int MaxRate
         {
             set
             {
@@ -72,7 +78,8 @@ namespace Funique
             }
             get => _BitRate;
         }
-        [JsonProperty] public int CRF
+        [JsonProperty]
+        public int CRF
         {
             set
             {
@@ -81,7 +88,8 @@ namespace Funique
             }
             get => _CRF;
         }
-        [JsonProperty] public string PixFmt
+        [JsonProperty]
+        public string PixFmt
         {
             set
             {
@@ -90,7 +98,8 @@ namespace Funique
             }
             get => _PixFmt;
         }
-        [JsonProperty] public string Preset
+        [JsonProperty]
+        public string Preset
         {
             set
             {
@@ -99,7 +108,8 @@ namespace Funique
             }
             get => _Preset;
         }
-        [JsonProperty] public int NOG
+        [JsonProperty]
+        public int NOG
         {
             set
             {
@@ -108,7 +118,8 @@ namespace Funique
             }
             get => _NOG;
         }
-        [JsonProperty] public int Keyint
+        [JsonProperty]
+        public int Keyint
         {
             set
             {

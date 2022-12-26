@@ -1,24 +1,7 @@
 ﻿using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
-using System.Xml.Serialization;
-using System.Xml;
 
 namespace Funique.GUI
 {
@@ -38,90 +21,11 @@ namespace Funique.GUI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            MasterM3U8Input.DataContext = ctx.Setting;
-            MasterM3U8HLS.DataContext = ctx.Setting;
-            MasterM3U8Detail.DataContext = ctx.Setting;
-            ModuleOptionsView.DataContext = null;
-        }
-
-        private void TextBox_IntOnly(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = !int.TryParse(e.Text, out _);
-        }
-
-        private void RunButton_Click(object sender, RoutedEventArgs e)
-        {
-            ctx.Control.Call(ctx.Setting);
-        }
-        private void KillButton_Click(object sender, RoutedEventArgs e)
-        {
-            ctx.Control.Kill();
-        }
-
-        private void Addnew_Click(object sender, RoutedEventArgs e)
-        {
-            ctx.Setting.Settings.Add(new ABRSetting());
-            ModuleListView.ItemsSource = ctx.Setting.Settings;
-        }
-
-        private void Removeabr_Click(object sender, RoutedEventArgs e)
-        {
-            MenuItem menuItem = sender as MenuItem;
-            if (menuItem != null)
-            {
-                ContextMenu parentContextMenu = menuItem.CommandParameter as ContextMenu;
-                if (parentContextMenu != null)
-                {
-                    Debug.WriteLine(parentContextMenu.PlacementTarget.GetType().FullName);
-                    StackPanel listViewItem = parentContextMenu.PlacementTarget as StackPanel;
-                    ABRSetting cf = listViewItem.DataContext as ABRSetting;
-                    if(ModuleOptionsView.DataContext == cf)
-                    {
-                        ModuleOptionsView.DataContext = null;
-                    }
-                    ctx.Setting.Settings.Remove(cf);
-                    ModuleListView.ItemsSource = ctx.Setting.Settings;
-                }
-            }
-        }
-
-        private void MoveUp_Click(object sender, RoutedEventArgs e)
-        {
-            MenuItem menuItem = sender as MenuItem;
-            if (menuItem != null)
-            {
-                ContextMenu parentContextMenu = menuItem.CommandParameter as ContextMenu;
-                if (parentContextMenu != null)
-                {
-                    Debug.WriteLine(parentContextMenu.PlacementTarget.GetType().FullName);
-                    StackPanel listViewItem = parentContextMenu.PlacementTarget as StackPanel;
-                    ABRSetting cf = listViewItem.DataContext as ABRSetting;
-                    int i = ctx.Setting.Settings.IndexOf(cf);
-                    if (i > 0)
-                    {
-                        ctx.Setting.Settings.Move(i - 1, i);
-                    }
-                }
-            }
-        }
-        private void MoveDown_Click(object sender, RoutedEventArgs e)
-        {
-            MenuItem menuItem = sender as MenuItem;
-            if (menuItem != null)
-            {
-                ContextMenu parentContextMenu = menuItem.CommandParameter as ContextMenu;
-                if (parentContextMenu != null)
-                {
-                    Debug.WriteLine(parentContextMenu.PlacementTarget.GetType().FullName);
-                    StackPanel listViewItem = parentContextMenu.PlacementTarget as StackPanel;
-                    ABRSetting cf = listViewItem.DataContext as ABRSetting;
-                    int i = ctx.Setting.Settings.IndexOf(cf);
-                    if(i < ctx.Setting.Settings.Count - 1)
-                    {
-                        ctx.Setting.Settings.Move(i, i + 1);
-                    }
-                }
-            }
+            PLadder.ctx = ctx;
+            PHLS.ctx = ctx;
+            PInput.ctx = ctx;
+            PDetail.ctx = ctx;
+            PAction.ctx = ctx;
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -138,8 +42,8 @@ namespace Funique.GUI
             if (success == true)
             {
                 ctx.Setting.Load(ofd.FileName);
-                ModuleListView.SelectedIndex = -1;
-                ModuleListView.ItemsSource = ctx.Setting.Settings;
+                PLadder.ModuleListView.SelectedIndex = -1;
+                PLadder.ModuleListView.ItemsSource = ctx.Setting.Settings;
             }
         }
 
@@ -149,7 +53,7 @@ namespace Funique.GUI
             sfd.DefaultExt = ".json";
             sfd.Filter = "Json file (.json)|*.json";
             bool? success = sfd.ShowDialog();
-            if(success == true)
+            if (success == true)
             {
                 ctx.Setting.Save(sfd.FileName);
             }
@@ -182,16 +86,9 @@ namespace Funique.GUI
             ctx.Setting.OutputSegmentFileName = "v%v/fileSequence%d.m4s";
         }
 
-        private void ModuleListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void TextBox_IntOnly(object sender, TextCompositionEventArgs e)
         {
-            ListBox lb = e.OriginalSource as ListBox;
-            if (lb.SelectedIndex == -1)
-            {
-                ModuleOptionsView.DataContext = null;
-                return;
-            }
-            ABRSetting target = ctx.Setting.Settings[lb.SelectedIndex];
-            ModuleOptionsView.DataContext = target;
+            e.Handled = !int.TryParse(e.Text, out _);
         }
     }
 }

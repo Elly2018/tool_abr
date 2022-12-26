@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Funique
 {
@@ -17,8 +18,10 @@ namespace Funique
                 args.Add("-c:a");
                 args.Add(AudioCodec);
             }
+            args.Add("-muxdelay");
+            args.Add("0");
         }
-        void P2_HLSConfig(List<string> args)
+        void P2_HLSConfig(List<string> args, string workdir)
         {
             args.Add("-f");
             args.Add("segment");
@@ -29,6 +32,9 @@ namespace Funique
             args.Add("-segment_list");
             args.Add($"{OutputAudioM3U8FileName}");
             args.Add($"{OutputAudioSegmentFileName}");
+
+            Directory.CreateDirectory(Path.Combine(workdir, Path.GetDirectoryName(OutputAudioM3U8FileName)));
+            Directory.CreateDirectory(Path.Combine(workdir, Path.GetDirectoryName(OutputAudioSegmentFileName)));
         }
     }
 }

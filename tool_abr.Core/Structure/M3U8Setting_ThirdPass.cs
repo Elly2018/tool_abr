@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Funique
 {
@@ -19,8 +18,10 @@ namespace Funique
                 args.Add("-c:s");
                 args.Add(SubtitleCodec);
             }
+            args.Add("-muxdelay");
+            args.Add("0");
         }
-        void P3_HLSConfig(List<string> args)
+        void P3_HLSConfig(List<string> args, string workdir)
         {
             args.Add("-f");
             args.Add("segment");
@@ -31,6 +32,9 @@ namespace Funique
             args.Add("-segment_list");
             args.Add($"{OutputSubtitleM3U8FileName}");
             args.Add($"{OutputSubtitleSegmentFileName}");
+
+            Directory.CreateDirectory(Path.Combine(workdir, Path.GetDirectoryName(OutputSubtitleM3U8FileName)));
+            Directory.CreateDirectory(Path.Combine(workdir, Path.GetDirectoryName(OutputSubtitleSegmentFileName)));
         }
     }
 }

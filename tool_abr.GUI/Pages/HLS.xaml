@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="Funique.GUI.Pages.HLS"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Funique.GUI.Pages"
+             xmlns:core="clr-namespace:Funique;assembly=Funique.Core"
+             xmlns:gui="clr-namespace:Funique.GUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Loaded="UserControl_Loaded">
+    <Grid Name="MasterM3U8HLS" Grid.Row="1" Grid.RowSpan="10" Grid.Column="1" Margin="8" ScrollViewer.VerticalScrollBarVisibility="Visible">
+        <Grid.DataContext>
+            <core:M3U8Setting />
+        </Grid.DataContext>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="80" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+        </Grid.RowDefinitions>
+
+        <Label Content="Master Name" Grid.Column="0" Grid.Row="1" />
+        <Label Content="Type" Grid.Column="0" Grid.Row="2" />
+        <Label Content="ListSize" Grid.Column="0" Grid.Row="3" />
+        <Label Content="HLS Init Time" Grid.Column="0" Grid.Row="4" />
+        <Label Content="HLS Time" Grid.Column="0" Grid.Row="5" />
+        <Label Content="Start time" Grid.Column="0" Grid.Row="6" />
+        <Label Content="Force keyframe" Grid.Column="0" Grid.Row="7" />
+        <Label Content="Playlist Type" Grid.Column="0" Grid.Row="8" />
+        <Label Content="DeleteFlag" Grid.Column="0" Grid.Row="9" />
+        <Label Content="AppendFlag" Grid.Column="0" Grid.Row="10" />
+        <Label Content="IndenFlag" Grid.Column="0" Grid.Row="11" />
+        <Label Content="SplitFlag" Grid.Column="0" Grid.Row="12" />
+        <Label Content="Output M3U8" Grid.Column="0" Grid.Row="13" />
+        <Label Content="Output Segment" Grid.Column="0" Grid.Row="14" />
+
+        <TextBox Text="{Binding MasterName}" Grid.Column="1" Grid.Row="1" />
+        <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding HLSTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Type}" />
+        <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding ListSize}" Grid.Column="1" Grid.Row="3" />
+        <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding HLSInitTime}" Grid.Column="1" Grid.Row="4" />
+        <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding HLSTime}" Grid.Column="1" Grid.Row="5" />
+        <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding StartTime}" Grid.Column="1" Grid.Row="6" />
+        <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding FKeyframe}" Grid.Column="1" Grid.Row="7" />
+        <ComboBox Grid.Column="1" Grid.Row="8" ItemsSource="{Binding HLSPlaylistTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding PlaylistType}" />
+        <CheckBox IsChecked="{Binding DeleteFlag}" Grid.Column="1" Grid.Row="9" />
+        <CheckBox IsChecked="{Binding AppendFlag}" Grid.Column="1" Grid.Row="10" />
+        <CheckBox IsChecked="{Binding IndenFlag}" Grid.Column="1" Grid.Row="11" />
+        <CheckBox IsChecked="{Binding SplitFlag}" Grid.Column="1" Grid.Row="12" />
+        <TextBox Text="{Binding OutputM3U8FileName}" Grid.Column="1" Grid.Row="13" />
+        <TextBox Text="{Binding OutputSegmentFileName}" Grid.Column="1" Grid.Row="14" />
+    </Grid>
+</UserControl>

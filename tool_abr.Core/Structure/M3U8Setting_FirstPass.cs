@@ -39,6 +39,8 @@ namespace Funique
                 args.Add("-vframes");
                 args.Add($"{VFrame}");
             }
+            args.Add("-muxdelay");
+            args.Add("0");
         }
         void P1_MapLayout(List<string> args, int SettingCount)
         {
@@ -85,6 +87,11 @@ namespace Funique
                     args.Add($"-preset:{i}");
                     args.Add($"{target.Preset}");
                 }
+                if (!string.IsNullOrEmpty(target.PixFmt))
+                {
+                    args.Add($"-pix_fmt:{i}");
+                    args.Add($"{target.PixFmt}");
+                }
                 if (target.MaxRate != 0)
                 {
                     if (target.VideoCodec.Contains("nvenc"))
@@ -126,16 +133,11 @@ namespace Funique
 
                     }
                 }
-                if (!string.IsNullOrEmpty(InputAudio) || HaveAudio)
+                if ((!SeperateAudio && !string.IsNullOrEmpty(InputAudio)) || HaveAudio)
                 {
                     args.Add($"-c:a:{SettingCount}");
                     args.Add("copy");
                 }
-            }
-            if (!string.IsNullOrEmpty(InputSubtitle))
-            {
-                args.Add($"-c:s:{SettingCount + 1}");
-                args.Add("ttml");
             }
         }
         void P1_HLSMapLayout(List<string> args, List<string> buffer, int SettingCount)
@@ -143,7 +145,7 @@ namespace Funique
             args.Add("-var_stream_map");
             for (int i = 0; i < SettingCount; i++)
             {
-                if (!string.IsNullOrEmpty(InputAudio) || HaveAudio)
+                if ((!SeperateAudio && !string.IsNullOrEmpty(InputAudio)) || HaveAudio)
                 {
                     buffer.Add($"v:{i},a:{i}");
                 }
@@ -161,7 +163,7 @@ namespace Funique
             args.Add("-master_pl_name");
             args.Add(MasterName);
         }
-        void P1_HLSConfig(List<string> args, List<string> buffer)
+        void P1_HLSConfig(List<string> args, List<string> buffer, string workdir)
         {
             args.Add("-f");
             args.Add("hls");

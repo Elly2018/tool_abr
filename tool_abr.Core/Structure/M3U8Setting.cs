@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using Newtonsoft.Json;
 
 namespace Funique
 {
@@ -54,10 +54,12 @@ namespace Funique
         string _OutputAudioSegmentFileName;
         string _OutputSubtitleSegmentFileName;
         ObservableCollection<ABRSetting> _Settings = new ObservableCollection<ABRSetting>();
+        ObservableCollection<JobExecute> _Jobs = new ObservableCollection<JobExecute>();
         #endregion
 
         #region Properties
-        [JsonProperty] public bool Sync
+        [JsonProperty]
+        public bool Sync
         {
             set
             {
@@ -66,7 +68,8 @@ namespace Funique
             }
             get => _Sync;
         }
-        [JsonProperty] public int StreamingLoop
+        [JsonProperty]
+        public int StreamingLoop
         {
             set
             {
@@ -75,7 +78,8 @@ namespace Funique
             }
             get => _StreamingLoop;
         }
-        [JsonProperty] public bool Wall_Clock
+        [JsonProperty]
+        public bool Wall_Clock
         {
             set
             {
@@ -84,7 +88,8 @@ namespace Funique
             }
             get => _Wall_Clock;
         }
-        [JsonProperty] public bool Cache
+        [JsonProperty]
+        public bool Cache
         {
             set
             {
@@ -93,7 +98,8 @@ namespace Funique
             }
             get => _Cache;
         }
-        [JsonProperty] public bool HaveAudio
+        [JsonProperty]
+        public bool HaveAudio
         {
             set
             {
@@ -102,7 +108,8 @@ namespace Funique
             }
             get => _HaveAudio;
         }
-        [JsonProperty] public int StartNumber
+        [JsonProperty]
+        public int StartNumber
         {
             set
             {
@@ -111,7 +118,8 @@ namespace Funique
             }
             get => _StartNumber;
         }
-        [JsonProperty] public int VFrame
+        [JsonProperty]
+        public int VFrame
         {
             set
             {
@@ -120,7 +128,8 @@ namespace Funique
             }
             get => _VFrame;
         }
-        [JsonProperty] public string Input
+        [JsonProperty]
+        public string Input
         {
             set
             {
@@ -129,7 +138,8 @@ namespace Funique
             }
             get => _Input;
         }
-        [JsonProperty] public string InputAudio
+        [JsonProperty]
+        public string InputAudio
         {
             set
             {
@@ -138,7 +148,8 @@ namespace Funique
             }
             get => _InputAudio;
         }
-        [JsonProperty] public string InputSubtitle
+        [JsonProperty]
+        public string InputSubtitle
         {
             set
             {
@@ -147,7 +158,8 @@ namespace Funique
             }
             get => _InputSubtitle;
         }
-        [JsonProperty] public string MasterName
+        [JsonProperty]
+        public string MasterName
         {
             set
             {
@@ -156,7 +168,8 @@ namespace Funique
             }
             get => _MasterName;
         }
-        [JsonProperty] public HLSType Type
+        [JsonProperty]
+        public HLSType Type
         {
             set
             {
@@ -165,7 +178,8 @@ namespace Funique
             }
             get => (HLSType)_Type;
         }
-        [JsonProperty] public HWAccelType HWAccelType
+        [JsonProperty]
+        public HWAccelType HWAccelType
         {
             set
             {
@@ -174,7 +188,8 @@ namespace Funique
             }
             get => (HWAccelType)_HWAccelType;
         }
-        [JsonProperty] public int ListSize
+        [JsonProperty]
+        public int ListSize
         {
             set
             {
@@ -183,7 +198,8 @@ namespace Funique
             }
             get => _ListSize;
         }
-        [JsonProperty] public int HLSInitTime
+        [JsonProperty]
+        public int HLSInitTime
         {
             set
             {
@@ -192,7 +208,8 @@ namespace Funique
             }
             get => _HLSInitTime;
         }
-        [JsonProperty] public int HLSTime
+        [JsonProperty]
+        public int HLSTime
         {
             set
             {
@@ -201,7 +218,8 @@ namespace Funique
             }
             get => _HLSTime;
         }
-        [JsonProperty] public string InputFramerate
+        [JsonProperty]
+        public string InputFramerate
         {
             set
             {
@@ -210,7 +228,8 @@ namespace Funique
             }
             get => _InputFramerate;
         }
-        [JsonProperty] public string OutputFramerate
+        [JsonProperty]
+        public string OutputFramerate
         {
             set
             {
@@ -219,7 +238,8 @@ namespace Funique
             }
             get => _OutputFramerate;
         }
-        [JsonProperty] public int StartTime
+        [JsonProperty]
+        public int StartTime
         {
             set
             {
@@ -228,7 +248,8 @@ namespace Funique
             }
             get => _StartTime;
         }
-        [JsonProperty] public int FKeyframe
+        [JsonProperty]
+        public int FKeyframe
         {
             set
             {
@@ -237,7 +258,8 @@ namespace Funique
             }
             get => _FKeyframe;
         }
-        [JsonProperty] public HLSPlaylistType PlaylistType
+        [JsonProperty]
+        public HLSPlaylistType PlaylistType
         {
             set
             {
@@ -246,7 +268,8 @@ namespace Funique
             }
             get => (HLSPlaylistType)_PlaylistType;
         }
-        [JsonProperty] public bool DeleteFlag
+        [JsonProperty]
+        public bool DeleteFlag
         {
             set
             {
@@ -255,7 +278,8 @@ namespace Funique
             }
             get => _DeleteFlag;
         }
-        [JsonProperty] public bool AppendFlag
+        [JsonProperty]
+        public bool AppendFlag
         {
             set
             {
@@ -264,7 +288,8 @@ namespace Funique
             }
             get => _AppendFlag;
         }
-        [JsonProperty] public bool SeperateAudio
+        [JsonProperty]
+        public bool SeperateAudio
         {
             set
             {
@@ -273,7 +298,8 @@ namespace Funique
             }
             get => _SeperateAudio;
         }
-        [JsonProperty] public AudioSourceType AudioSource
+        [JsonProperty]
+        public AudioSourceType AudioSource
         {
             set
             {
@@ -282,7 +308,8 @@ namespace Funique
             }
             get => (AudioSourceType)_AudioSource;
         }
-        [JsonProperty] public string AudioCodec
+        [JsonProperty]
+        public string AudioCodec
         {
             set
             {
@@ -291,7 +318,8 @@ namespace Funique
             }
             get => _AudioCodec;
         }
-        [JsonProperty] public string SubtitleCodec
+        [JsonProperty]
+        public string SubtitleCodec
         {
             set
             {
@@ -300,7 +328,8 @@ namespace Funique
             }
             get => _SubtitleCodec;
         }
-        [JsonProperty] public bool IndenFlag
+        [JsonProperty]
+        public bool IndenFlag
         {
             set
             {
@@ -309,7 +338,8 @@ namespace Funique
             }
             get => _IndenFlag;
         }
-        [JsonProperty] public bool SplitFlag
+        [JsonProperty]
+        public bool SplitFlag
         {
             set
             {
@@ -318,7 +348,8 @@ namespace Funique
             }
             get => _SplitFlag;
         }
-        [JsonProperty] public int MuxingQueue
+        [JsonProperty]
+        public int MuxingQueue
         {
             set
             {
@@ -327,7 +358,8 @@ namespace Funique
             }
             get => _MuxingQueue;
         }
-        [JsonProperty] public string OutputM3U8FileName
+        [JsonProperty]
+        public string OutputM3U8FileName
         {
             set
             {
@@ -336,7 +368,8 @@ namespace Funique
             }
             get => _OutputM3U8FileName;
         }
-        [JsonProperty] public string OutputAudioM3U8FileName
+        [JsonProperty]
+        public string OutputAudioM3U8FileName
         {
             set
             {
@@ -345,7 +378,8 @@ namespace Funique
             }
             get => _OutputAudioM3U8FileName;
         }
-        [JsonProperty] public string OutputSubtitleM3U8FileName
+        [JsonProperty]
+        public string OutputSubtitleM3U8FileName
         {
             set
             {
@@ -354,7 +388,8 @@ namespace Funique
             }
             get => _OutputSubtitleM3U8FileName;
         }
-        [JsonProperty] public string OutputSegmentFileName
+        [JsonProperty]
+        public string OutputSegmentFileName
         {
             set
             {
@@ -363,7 +398,8 @@ namespace Funique
             }
             get => _OutputSegmentFileName;
         }
-        [JsonProperty] public string OutputAudioSegmentFileName
+        [JsonProperty]
+        public string OutputAudioSegmentFileName
         {
             set
             {
@@ -372,7 +408,8 @@ namespace Funique
             }
             get => _OutputAudioSegmentFileName;
         }
-        [JsonProperty] public string OutputSubtitleSegmentFileName
+        [JsonProperty]
+        public string OutputSubtitleSegmentFileName
         {
             set
             {
@@ -381,7 +418,8 @@ namespace Funique
             }
             get => _OutputSubtitleSegmentFileName;
         }
-        [JsonProperty] public ObservableCollection<ABRSetting> Settings
+        [JsonProperty]
+        public ObservableCollection<ABRSetting> Settings
         {
             set
             {
@@ -390,6 +428,16 @@ namespace Funique
             }
             get => _Settings;
         }
+        public ObservableCollection<JobExecute> Jobs
+        {
+            set
+            {
+                _Jobs = value;
+                OnPropertyChanged("Jobs");
+            }
+            get => _Jobs;
+        }
+        public string WorkDir { set; get; }
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -400,12 +448,10 @@ namespace Funique
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
             }
         }
-
         public void Save(string path)
         {
             File.WriteAllText(path, JsonConvert.SerializeObject(this, Formatting.Indented));
         }
-
         public void Load(string path)
         {
             if (!File.Exists(path)) return;
@@ -446,7 +492,7 @@ namespace Funique
                 OutputSubtitleSegmentFileName = load.OutputSubtitleSegmentFileName;
                 Settings = load.Settings;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"{ex.Message}\n{ex.StackTrace}");
             }
@@ -469,7 +515,7 @@ namespace Funique
                     P1_MapLayout(args, SettingCount);
                     P1_ProfileSetup(args, SettingCount);
                     P1_HLSMapLayout(args, buffer, SettingCount);
-                    P1_HLSConfig(args, buffer);
+                    P1_HLSConfig(args, buffer, WorkDir);
                     result.Add(string.Join(' ', args));
                     args.Clear();
                 }
@@ -479,7 +525,7 @@ namespace Funique
                 {
                     P2_Prefix(args);
                     P2_FileInput(args);
-                    P2_HLSConfig(args);
+                    P2_HLSConfig(args, WorkDir);
                     result.Add(string.Join(' ', args));
                     args.Clear();
                 }
@@ -489,9 +535,29 @@ namespace Funique
                 {
                     P3_Prefix(args);
                     P3_FileInput(args);
-                    P3_HLSConfig(args);
+                    P3_HLSConfig(args, WorkDir);
                     result.Add(string.Join(' ', args));
                     args.Clear();
+                }
+                return result.ToArray();
+            }
+        }
+
+        [JsonIgnore] public JobExecute[] Processes
+        {
+            get
+            {
+                List<JobExecute> result = new List<JobExecute>();
+                string[] args = Arguments;
+                for(int i = 0; i < args.Length; i++)
+                {
+                    JobExecute buffer = new JobExecute()
+                    {
+                        _Type = JobType.FFMPEG,
+                        _Name = $"{i}",
+                        _Argument = args[i]
+                    };
+                    result.Add(buffer);
                 }
                 return result.ToArray();
             }
@@ -504,7 +570,7 @@ namespace Funique
             {
                 if (SeperateAudio)
                 {
-                    if(AudioSource == AudioSourceType.None || 
+                    if (AudioSource == AudioSourceType.None ||
                         (AudioSource == AudioSourceType.FromFile && string.IsNullOrEmpty(InputAudio)))
                     {
                         return false;

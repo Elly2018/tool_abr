@@ -3,4 +3,38 @@
   <PropertyGroup>
     <_LastSelectedProfileId>C:\Users\funique\Documents\GitHub\tool_abr\tool_abr.GUI\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Pages\Action.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Pages\Detail.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Pages\HLS.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Pages\Input.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Pages\Ladder.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\Action.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Detail.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\HLS.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Input.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Ladder.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
 </Project>

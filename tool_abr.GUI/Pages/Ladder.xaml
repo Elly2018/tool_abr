@@ -1,0 +1,89 @@
+﻿<UserControl x:Class="Funique.GUI.Pages.Ladder"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Funique.GUI.Pages"
+      xmlns:core="clr-namespace:Funique;assembly=Funique.Core"
+      xmlns:gui="clr-namespace:Funique.GUI"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Loaded="Page_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ListBox Name="ModuleListView" ItemsSource="{Binding Setting.Settings}" Grid.Row="0" SelectionChanged="ModuleListView_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <ListBoxItem Content="{Binding Name}" HorizontalAlignment="Stretch" />
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="MoveUp" Click="MoveUp_Click" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
+                                <MenuItem Header="MoveDown" Click="MoveDown_Click" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
+                                <Separator />
+                                <MenuItem Header="Remove" Click="Removeabr_Click" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add" Click="Addnew_Click"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
+        <Grid Name="ModuleOptionsView" Grid.Row="1" Margin="8" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <Grid.DataContext>
+                <core:ABRSetting />
+            </Grid.DataContext>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+            </Grid.RowDefinitions>
+
+            <Label Content="Name" Grid.Column="0" Grid.Row="0" />
+            <Label Content="Width" Grid.Column="0" Grid.Row="1" />
+            <Label Content="Height" Grid.Column="0" Grid.Row="2" />
+            <Label Content="Video Codec" Grid.Column="0" Grid.Row="3" />
+            <Label Content="Audio Codec" Grid.Column="0" Grid.Row="4" />
+            <Label Content="Max Bitrate" Grid.Column="0" Grid.Row="5" />
+            <Label Content="CRF" Grid.Column="0" Grid.Row="6" />
+            <Label Content="PixFmt" Grid.Column="0" Grid.Row="7" />
+            <Label Content="Preset" Grid.Column="0" Grid.Row="8" />
+            <Label Content="NOG" Grid.Column="0" Grid.Row="9" />
+            <Label Content="Keyint" Grid.Column="0" Grid.Row="10" />
+
+            <TextBox Text="{Binding Name}" Grid.Column="1" Grid.Row="0" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding Width}" Grid.Column="1" Grid.Row="1" Visibility="{Binding Path=., TargetNullValue=Collapsed }" />
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding Height}" Grid.Column="1" Grid.Row="2" Visibility="{Binding Path=., TargetNullValue=Collapsed }" />
+            <TextBox Text="{Binding VideoCodec}" Grid.Column="1" Grid.Row="3" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+            <TextBox Text="{Binding AudioCodec}" Grid.Column="1" Grid.Row="4" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding MaxRate}" Grid.Column="1" Grid.Row="5" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding CRF}" Grid.Column="1" Grid.Row="6" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+            <TextBox Text="{Binding PixFmt}" Grid.Column="1" Grid.Row="7" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+            <TextBox Text="{Binding Preset}" Grid.Column="1" Grid.Row="8" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding NOG}" Grid.Column="1" Grid.Row="9" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+            <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding Keyint}" Grid.Column="1" Grid.Row="10" Visibility="{Binding Path=., TargetNullValue=Collapsed }"/>
+
+            <Label Content="k" Grid.Column="2" Grid.Row="5" />
+        </Grid>
+    </Grid>
+</UserControl>
