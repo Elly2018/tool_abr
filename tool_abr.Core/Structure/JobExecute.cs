@@ -9,6 +9,21 @@ namespace Funique
         public string _Description;
         public JobType _Type;
 
+        public JobExecute() { }
+
+        public JobExecute(string name, string argument)
+        {
+            Name = name;
+            Argument = argument;
+        }
+
+        public JobExecute(string name, string description, string argument)
+        {
+            Name = name;
+            Description = description;
+            Argument = argument;
+        }
+
         public string Name
         {
             set

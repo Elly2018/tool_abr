@@ -29,26 +29,35 @@
             <RowDefinition Height="23" />
             <RowDefinition Height="23" />
             <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
         </Grid.RowDefinitions>
 
         <Label Content="MuxingQueue" Grid.Column="0" Grid.Row="1" />
         <Label Content="Audio Seperate" Grid.Column="0" Grid.Row="2" />
-        <Label Content="Audio Source" Grid.Column="0" Grid.Row="3" />
-        <Label Content="Audio Codec" Grid.Column="0" Grid.Row="4" />
-        <Label Content="Subtitle Codec" Grid.Column="0" Grid.Row="5" />
-        <Label Content="Output Audio M3U8" Grid.Column="0" Grid.Row="6" />
-        <Label Content="Output Audio Segment" Grid.Column="0" Grid.Row="7" />
-        <Label Content="Output Subtitle M3U8" Grid.Column="0" Grid.Row="8" />
-        <Label Content="Output Subtitle Segment" Grid.Column="0" Grid.Row="9" />
+        <Label Content="Output Single File" Grid.Column="0" Grid.Row="3" />
+        <Label Content="Single File Audio" Grid.Column="0" Grid.Row="4" />
+        <Label Content="Process Single File First" Grid.Column="0" Grid.Row="5" />
+        <Label Content="Audio Source" Grid.Column="0" Grid.Row="6" />
+        <Label Content="Audio Codec" Grid.Column="0" Grid.Row="7" />
+        <Label Content="Subtitle Codec" Grid.Column="0" Grid.Row="8" />
+        <Label Content="Output Audio M3U8" Grid.Column="0" Grid.Row="9" />
+        <Label Content="Output Audio Segment" Grid.Column="0" Grid.Row="10" />
+        <Label Content="Output Subtitle M3U8" Grid.Column="0" Grid.Row="11" />
+        <Label Content="Output Subtitle Segment" Grid.Column="0" Grid.Row="12" />
 
         <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding MuxingQueue}" Grid.Column="1" Grid.Row="1" />
         <CheckBox IsChecked="{Binding SeperateAudio}" Grid.Column="1" Grid.Row="2" />
-        <ComboBox Grid.Column="1" Grid.Row="3" ItemsSource="{Binding AudioSourceTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding AudioSource}" />
-        <TextBox Text="{Binding AudioCodec}" Grid.Column="1" Grid.Row="4" />
-        <TextBox Text="{Binding SubtitleCodec}" Grid.Column="1" Grid.Row="5" />
-        <TextBox Text="{Binding OutputAudioM3U8FileName}" Grid.Column="1" Grid.Row="6" />
-        <TextBox Text="{Binding OutputAudioSegmentFileName}" Grid.Column="1" Grid.Row="7" />
-        <TextBox Text="{Binding OutputSubtitleM3U8FileName}" Grid.Column="1" Grid.Row="8" />
-        <TextBox Text="{Binding OutputSubtitleSegmentFileName}" Grid.Column="1" Grid.Row="9" />
+        <CheckBox IsChecked="{Binding OutputSingleFile}" Grid.Column="1" Grid.Row="3" />
+        <CheckBox IsChecked="{Binding OutputAudio}" Grid.Column="1" Grid.Row="4" />
+        <CheckBox IsChecked="{Binding ProcessingSingleFileFirst}" Grid.Column="1" Grid.Row="5" />
+        <ComboBox Grid.Column="1" Grid.Row="6" ItemsSource="{Binding AudioSourceTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding AudioSource}" />
+        <TextBox Text="{Binding AudioCodec}" Grid.Column="1" Grid.Row="7" />
+        <TextBox Text="{Binding SubtitleCodec}" Grid.Column="1" Grid.Row="8" />
+        <TextBox Text="{Binding OutputAudioM3U8FileName}" Grid.Column="1" Grid.Row="9" />
+        <TextBox Text="{Binding OutputAudioSegmentFileName}" Grid.Column="1" Grid.Row="10" />
+        <TextBox Text="{Binding OutputSubtitleM3U8FileName}" Grid.Column="1" Grid.Row="11" />
+        <TextBox Text="{Binding OutputSubtitleSegmentFileName}" Grid.Column="1" Grid.Row="12" />
     </Grid>
 </UserControl>

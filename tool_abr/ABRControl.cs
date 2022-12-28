@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace Funique
@@ -48,12 +49,10 @@ namespace Funique
             this.dir = dir;
         }
 
-        public void Call(M3U8Setting setting)
+        public void Call(JobExecute[] setting)
         {
             Kill();
-            setting.WorkDir = dir;
-            string[] args = setting.Arguments;
-            StartBackgroundProcess(args);
+            StartBackgroundProcess(setting.Select(x => x.Argument).ToArray());
         }
         public void Kill()
         {

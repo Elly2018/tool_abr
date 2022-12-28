@@ -136,7 +136,7 @@ namespace Funique
                 if ((!SeperateAudio && !string.IsNullOrEmpty(InputAudio)) || HaveAudio)
                 {
                     args.Add($"-c:a:{SettingCount}");
-                    args.Add("copy");
+                    args.Add(string.IsNullOrEmpty(target.AudioCodec) ? "copy" : target.AudioCodec);
                 }
             }
         }

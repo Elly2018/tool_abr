@@ -7,6 +7,7 @@ namespace Funique
     public sealed class ABRSetting : INotifyPropertyChanged
     {
         string _Name = "Default Name";
+        string _FileName = "";
         int _Width;
         int _Height;
         string _VideoCodec;
@@ -27,6 +28,16 @@ namespace Funique
                 OnPropertyChanged("Name");
             }
             get => _Name;
+        }
+        [JsonProperty]
+        public string FileName
+        {
+            set
+            {
+                _FileName = value;
+                OnPropertyChanged("FileName");
+            }
+            get => _FileName;
         }
         [JsonProperty]
         public int Width

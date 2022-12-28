@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace Funique
 {
@@ -43,6 +44,9 @@ namespace Funique
         bool _IndenFlag;
         bool _SplitFlag;
         int _MuxingQueue;
+        bool _OutputSingleFile;
+        bool _OutputAudio;
+        bool _ProcessingSingleFileFirst;
         bool _SeperateAudio;
         int _AudioSource;
         string _AudioCodec;
@@ -359,6 +363,36 @@ namespace Funique
             get => _MuxingQueue;
         }
         [JsonProperty]
+        public bool OutputSingleFile
+        {
+            set
+            {
+                _OutputSingleFile = value;
+                OnPropertyChanged("OutputSingleFile");
+            }
+            get => _OutputSingleFile;
+        }
+        [JsonProperty]
+        public bool OutputAudio
+        {
+            set
+            {
+                _OutputAudio = value;
+                OnPropertyChanged("OutputAudio");
+            }
+            get => _OutputAudio;
+        }
+        [JsonProperty]
+        public bool ProcessingSingleFileFirst
+        {
+            set
+            {
+                _ProcessingSingleFileFirst = value;
+                OnPropertyChanged("ProcessingSingleFileFirst");
+            }
+            get => _ProcessingSingleFileFirst;
+        }
+        [JsonProperty]
         public string OutputM3U8FileName
         {
             set
@@ -437,6 +471,7 @@ namespace Funique
             }
             get => _Jobs;
         }
+        [JsonIgnore]
         public string WorkDir { set; get; }
         #endregion
 
@@ -479,6 +514,9 @@ namespace Funique
                 IndenFlag = load.IndenFlag;
                 SplitFlag = load.SplitFlag;
                 MuxingQueue = load.MuxingQueue;
+                OutputSingleFile = load.OutputSingleFile;
+                OutputAudio = load.OutputAudio;
+                ProcessingSingleFileFirst = load.ProcessingSingleFileFirst;
                 SeperateAudio = load.SeperateAudio;
                 AudioSource = load.AudioSource;
                 PlaylistType = load.PlaylistType;
@@ -502,7 +540,15 @@ namespace Funique
         {
             get
             {
-                List<string> result = new List<string>();
+                return Processes.Select(x => x.Argument).ToArray();
+            }
+        }
+
+        [JsonIgnore] public JobExecute[] Processes
+        {
+            get
+            {
+                List<JobExecute> result = new List<JobExecute>();
                 List<string> args = new List<string>();
                 List<string> buffer = new List<string>();
                 int SettingCount = Settings.Count;
@@ -516,7 +562,7 @@ namespace Funique
                     P1_ProfileSetup(args, SettingCount);
                     P1_HLSMapLayout(args, buffer, SettingCount);
                     P1_HLSConfig(args, buffer, WorkDir);
-                    result.Add(string.Join(' ', args));
+                    result.Add(new JobExecute("Main ABR HLS", "", string.Join(' ', args)));
                     args.Clear();
                 }
 
@@ -526,7 +572,7 @@ namespace Funique
                     P2_Prefix(args);
                     P2_FileInput(args);
                     P2_HLSConfig(args, WorkDir);
-                    result.Add(string.Join(' ', args));
+                    result.Add(new JobExecute("Main Audio HLS", "", string.Join(' ', args)));
                     args.Clear();
                 }
 
@@ -536,28 +582,20 @@ namespace Funique
                     P3_Prefix(args);
                     P3_FileInput(args);
                     P3_HLSConfig(args, WorkDir);
-                    result.Add(string.Join(' ', args));
+                    result.Add(new JobExecute("Main Subtitle HLS", "", string.Join(' ', args)));
                     args.Clear();
                 }
-                return result.ToArray();
-            }
-        }
 
-        [JsonIgnore] public JobExecute[] Processes
-        {
-            get
-            {
-                List<JobExecute> result = new List<JobExecute>();
-                string[] args = Arguments;
-                for(int i = 0; i < args.Length; i++)
+                // Four pass: Single file output
+                if (NeedPass(4))
                 {
-                    JobExecute buffer = new JobExecute()
-                    {
-                        _Type = JobType.FFMPEG,
-                        _Name = $"{i}",
-                        _Argument = args[i]
-                    };
-                    result.Add(buffer);
+                    P4_Prefix(args);
+                    P4_FileInput(args);
+                    P4_MapLayout(args, SettingCount);
+                    P4_ProfileSetup(args, SettingCount);
+                    if (ProcessingSingleFileFirst) result.Insert(0, new JobExecute("Single File", "", string.Join(' ', args)));
+                    else result.Add(new JobExecute("Single File", "", string.Join(' ', args)));
+                    args.Clear();
                 }
                 return result.ToArray();
             }
@@ -580,6 +618,7 @@ namespace Funique
                 return false;
             }
             else if (!string.IsNullOrEmpty(InputSubtitle) && pass == 3) return true;
+            else if (OutputSingleFile && pass == 4) return true;
             return false;
         }
         void Commom_Prefix(List<string> args)

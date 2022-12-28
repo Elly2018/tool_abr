@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
@@ -33,7 +34,7 @@ namespace Funique.GUI.Pages
 
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
-            ctx.Control.Call(ctx.Setting);
+            ctx.Control.Call(ctx.Setting.Jobs.ToArray());
         }
         private void KillButton_Click(object sender, RoutedEventArgs e)
         {
