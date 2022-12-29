@@ -1,13 +1,18 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Funique
 {
     public sealed class JobExecute : INotifyPropertyChanged
     {
-        public string _Name;
-        public string _Argument;
-        public string _Description;
-        public JobType _Type;
+        string _Name;
+        string _Argument;
+        ObservableCollection<string> _Arguments = new ObservableCollection<string>();
+        Action _DoneProcess;
+        string _Description;
+        JobType _Type = JobType.FFMPEG;
 
         public JobExecute() { }
 
@@ -42,6 +47,9 @@ namespace Funique
             }
             get => _Description;
         }
+        /// <summary>
+        /// Will execute first
+        /// </summary>
         public string Argument
         {
             set
@@ -50,6 +58,47 @@ namespace Funique
                 OnPropertyChanged("Argument");
             }
             get => _Argument;
+        }
+        /// <summary>
+        /// Will execute one by one
+        /// </summary>
+        public ObservableCollection<string> Arguments
+        {
+            set
+            {
+                _Arguments = value;
+                OnPropertyChanged("Arguments");
+            }
+            get => _Arguments;
+        }
+        public Action DoneProcess
+        {
+            set
+            {
+                _DoneProcess = value;
+                OnPropertyChanged("DoneProcess");
+            }
+            get => _DoneProcess;
+        }
+
+        public JobType Type
+        {
+            set
+            {
+                _Type = value;
+                OnPropertyChanged("Type");
+            }
+            get => _Type;
+        }
+        public string[] ArgumentList
+        {
+            get
+            {
+                List<string> list_args = new List<string>();
+                if(!string.IsNullOrEmpty(Argument)) list_args.Add(Argument);
+                if(Arguments.Count > 0) list_args.AddRange(Arguments);
+                return list_args.ToArray();
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

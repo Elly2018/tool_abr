@@ -13,6 +13,16 @@ namespace Funique
         {
             args.Add("-i");
             args.Add($"\"{InputSubtitle}\"");
+            if (StartNumber != 0)
+            {
+                args.Add("-ss");
+                args.Add($"{StartNumber / float.Parse(InputFramerate)}");
+            }
+            if (VFrame != 0)
+            {
+                args.Add("-t");
+                args.Add($"{VFrame / float.Parse(InputFramerate)}");
+            }
             if (!string.IsNullOrEmpty(SubtitleCodec))
             {
                 args.Add("-c:s");

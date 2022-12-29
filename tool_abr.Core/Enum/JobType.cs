@@ -2,8 +2,11 @@
 {
     public enum JobType
     {
+        // Argument use raw cmd
         CMD,
+        // Argument use ffmpeg
         FFMPEG,
-        MASTER
+        // Arguments use ffprobe
+        FFPROBE
     }
 }

@@ -462,6 +462,7 @@ namespace Funique
             }
             get => _Settings;
         }
+        [JsonIgnore]
         public ObservableCollection<JobExecute> Jobs
         {
             set
@@ -597,6 +598,28 @@ namespace Funique
                     else result.Add(new JobExecute("Single File", "", string.Join(' ', args)));
                     args.Clear();
                 }
+
+                // Ten pass: Analysis master m3u8 and create it
+                if (NeedPass(10))
+                {
+                    JobExecute job_buffer = new JobExecute()
+                    {
+                        Name = "Master Generate"
+                    };
+                    for(int i = 0; i < Settings.Count; i++)
+                    {
+                        string b = Path.Combine(WorkDir, OutputM3U8FileName.Replace("/", "\\"));
+                        b = b.Replace("%v", i.ToString());
+                        Directory.CreateDirectory(Path.Combine(WorkDir, "temp"));
+                        P10_Main(args, b, Path.Combine(WorkDir, "temp", $"Video{i}.json"));
+                        job_buffer.Arguments.Add(string.Join(' ', args));
+                        args.Clear();
+                    }
+                    job_buffer.DoneProcess = P10_GenerateMasterM3U8;
+                    job_buffer.Type = JobType.FFPROBE;
+                    result.Add(job_buffer);
+                    args.Clear();
+                }
                 return result.ToArray();
             }
         }
@@ -619,6 +642,7 @@ namespace Funique
             }
             else if (!string.IsNullOrEmpty(InputSubtitle) && pass == 3) return true;
             else if (OutputSingleFile && pass == 4) return true;
+            else if (pass == 10) return true;
             return false;
         }
         void Commom_Prefix(List<string> args)

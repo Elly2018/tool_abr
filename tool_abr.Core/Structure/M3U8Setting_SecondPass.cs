@@ -18,6 +18,16 @@ namespace Funique
                 args.Add("-c:a");
                 args.Add(AudioCodec);
             }
+            if(StartNumber != 0)
+            {
+                args.Add("-ss");
+                args.Add($"{StartNumber / float.Parse(InputFramerate)}");
+            }
+            if (VFrame != 0)
+            {
+                args.Add("-t");
+                args.Add($"{VFrame / float.Parse(InputFramerate)}");
+            }
             args.Add("-muxdelay");
             args.Add("0");
         }

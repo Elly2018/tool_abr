@@ -41,7 +41,7 @@ namespace Funique
 
         Process proc = null;
         Thread thread = null;
-        Queue<string> jobs = new Queue<string>();
+        Queue<JobExecute> jobs = new Queue<JobExecute>();
         public Action<string> log = null;
 
         public void SetDirectory(string dir)
@@ -52,7 +52,7 @@ namespace Funique
         public void Call(JobExecute[] setting)
         {
             Kill();
-            StartBackgroundProcess(setting.Select(x => x.Argument).ToArray());
+            StartBackgroundProcess(setting);
         }
         public void Kill()
         {
@@ -85,22 +85,29 @@ namespace Funique
         public void RunSingle(JobExecute job)
         {
             Kill();
-            StartBackgroundProcess(new string[1] { job.Argument });
+            StartBackgroundProcess(new JobExecute[1] { job });
         }
-        void StartBackgroundProcess(string[] args)
+        void StartBackgroundProcess(JobExecute[] args)
         {
             foreach (var i in args) jobs.Enqueue(i);
             WriteCommand(args);
             thread = new Thread(BackgroundRunning);
             thread.Start();
         }
-        void WriteCommand(string[] args)
+        void WriteCommand(JobExecute[] args)
         {
             string path = Path.Combine(workdir, "command.txt");
             string message = DateTime.UtcNow.ToString();
             message += "\n";
-            foreach (var i in args) message += (i + "\n");
-            message += "\n";
+            foreach (var i in args)
+            {
+                foreach (var j in i.ArgumentList)
+                {
+                    message += (j + "\n");
+                }
+                message += "\n";
+            }
+            message += "\n\n";
             if (File.Exists(path))
             {
                 var writer = File.AppendText(path);
@@ -114,21 +121,44 @@ namespace Funique
         }
         void BackgroundRunning()
         {
-            string args = string.Empty;
+            JobExecute args = null;
             while (jobs.TryDequeue(out args))
             {
-                Debug.WriteLine(args);
-                proc = process;
                 try
                 {
-                    proc.StartInfo.Arguments = args;
-                    proc.Start();
-                    proc.BeginOutputReadLine();
-                    proc.BeginErrorReadLine();
-                    proc.WaitForExit();
-                    proc.OutputDataReceived -= Proc_OutputDataReceived;
-                    proc.ErrorDataReceived -= Proc_OutputDataReceived;
-                    proc.Dispose();
+                    var al = args.ArgumentList;
+                    for (int i = 0; i < al.Length; i++)
+                    {
+                        string current = al[i];
+                        proc = process;
+                        switch (args.Type)
+                        {
+                            case JobType.CMD:
+                                proc.StartInfo.FileName = "cmd";
+                                current = "-c " + current;
+                                break;
+                            default:
+                            case JobType.FFMPEG:
+                                proc.StartInfo.FileName = "ffmpeg";
+                                break;
+                            case JobType.FFPROBE:
+                                proc.StartInfo.FileName = "ffprobe";
+                                break;
+                        }
+                        Debug.WriteLine($"{proc.StartInfo.FileName} {current}");
+                        proc.StartInfo.Arguments = current;
+                        proc.Start();
+                        proc.BeginOutputReadLine();
+                        proc.BeginErrorReadLine();
+                        proc.WaitForExit();
+                        proc.OutputDataReceived -= Proc_OutputDataReceived;
+                        proc.ErrorDataReceived -= Proc_OutputDataReceived;
+                        proc.Dispose();
+                    }
+                    if (args.DoneProcess != null)
+                    {
+                        args.DoneProcess.Invoke();
+                    }
                 }
                 catch (ThreadInterruptedException ex)
                 {
