@@ -16,11 +16,12 @@ namespace Funique.GUI
         {
             InitializeComponent();
             this.Title = "ABR Helper";
-            ctx = new WindowDataContext();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            ctx = this.DataContext as WindowDataContext;
+            PInputs.ctx = ctx;
             PLadder.ctx = ctx;
             PHLS.ctx = ctx;
             PInput.ctx = ctx;

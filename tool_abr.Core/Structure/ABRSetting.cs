@@ -10,6 +10,7 @@ namespace Funique
         string _FileName = "";
         int _Width;
         int _Height;
+        string _FPS;
         string _VideoCodec;
         string _AudioCodec;
         int _BitRate;
@@ -58,6 +59,16 @@ namespace Funique
                 OnPropertyChanged("Height");
             }
             get => _Height;
+        }
+        [JsonProperty]
+        public string FPS
+        {
+            set
+            {
+                _FPS = value;
+                OnPropertyChanged("FPS");
+            }
+            get => _FPS;
         }
         [JsonProperty]
         public string VideoCodec

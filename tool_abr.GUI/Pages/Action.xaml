@@ -31,11 +31,10 @@
                 <core:JobExecute />
             </Grid.DataContext>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
@@ -44,16 +43,17 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Button Name="AnalysisButton" Content="ANALYSIS" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Click="AnalysisButton_Click" />
-            <Button Name="RunButton" Content="RUN" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Click="RunButton_Click" />
-            <Button Name="CleanButton" Content="CLEAN" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Click="CleanButton_Click" />
-            <Button Name="KillButton" Content="KILL" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Click="KillButton_Click" />
+            <Button Name="AnalysisButton" Content="ANALYSIS" Grid.Column="0" Grid.Row="0" Click="AnalysisButton_Click" />
+            <Button Name="RunButton" Content="RUN" Grid.Column="1" Grid.Row="0" Click="RunButton_Click" />
+            <Button Name="CleanButton" Content="CLEAN" Grid.Column="0" Grid.Row="1" Click="CleanButton_Click" />
+            <Button Name="PrintButton" Content="PRINT COMMANDS" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Click="PrintButton_Click" />
+            <Button Name="KillButton" Content="KILL" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Click="KillButton_Click" />
 
-            <Separator Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" />
+            <Separator Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
 
-            <Button Name="RunSingleButton" Content="Run Single" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Visibility="{Binding Path=., TargetNullValue=Collapsed }" Click="RunSingleButton_Click" />
+            <Button Name="RunSingleButton" Content="Run Single" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Visibility="{Binding Path=., TargetNullValue=Collapsed }" Click="RunSingleButton_Click" />
 
-            <TextBox Name="Log" Text="ss" TextWrapping="Wrap" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Visible"/>
+            <TextBox Name="Log" Text="ss" TextWrapping="Wrap" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Visible"/>
         </Grid>
     </Grid>
 </UserControl>

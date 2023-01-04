@@ -27,6 +27,9 @@
             <TabItem Header="Input">
                 <pages:Input x:Name="PInput" />
             </TabItem>
+            <TabItem Header="Inputs" IsEnabled="{Binding Setting.UseConCat}">
+                <pages:MultipleInputs x:Name="PInputs" />
+            </TabItem>
             <TabItem Header="HLS">
                 <pages:HLS x:Name="PHLS" />
             </TabItem>

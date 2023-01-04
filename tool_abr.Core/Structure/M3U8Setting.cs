@@ -19,16 +19,21 @@ namespace Funique
 
         #region Fields
         bool _Sync;
+        string _Lut;
+        bool _Overwrite;
+        bool _UseConCat;
         int _StreamingLoop;
         bool _Wall_Clock;
         bool _Cache;
         int _StartNumber;
         int _VFrame;
+        string _ASync;
+        string _VSync;
         string _Input;
         string _InputAudio;
         string _InputSubtitle;
         string _InputFramerate;
-        string _OutputFramerate;
+        string _AudioOffset;
         bool _HaveAudio;
         string _MasterName;
         int _Type;
@@ -59,6 +64,7 @@ namespace Funique
         string _OutputSubtitleSegmentFileName;
         ObservableCollection<ABRSetting> _Settings = new ObservableCollection<ABRSetting>();
         ObservableCollection<JobExecute> _Jobs = new ObservableCollection<JobExecute>();
+        ObservableCollection<MultipleInput> _Inputs = new ObservableCollection<MultipleInput>();
         #endregion
 
         #region Properties
@@ -71,6 +77,37 @@ namespace Funique
                 OnPropertyChanged("Sync");
             }
             get => _Sync;
+        }
+        [JsonProperty]
+        public string Lut
+        {
+            set
+            {
+                _Lut = value;
+                OnPropertyChanged("Lut");
+            }
+            get => _Lut;
+        }
+        [JsonProperty]
+        public bool Overwrite
+        {
+            set
+            {
+                _Overwrite = value;
+                OnPropertyChanged("Overwrite");
+            }
+            get => _Overwrite;
+        }
+        [JsonProperty]
+        public bool UseConCat
+        {
+            set
+            {
+                _UseConCat = value;
+                OnPropertyChanged("UseConCat");
+                OnPropertyChanged("MultipleInputEnable");
+            }
+            get => _UseConCat;
         }
         [JsonProperty]
         public int StreamingLoop
@@ -109,6 +146,7 @@ namespace Funique
             {
                 _HaveAudio = value;
                 OnPropertyChanged("HaveAudio");
+                OnPropertyChanged("AudioInputEnable");
             }
             get => _HaveAudio;
         }
@@ -131,6 +169,26 @@ namespace Funique
                 OnPropertyChanged("VFrame");
             }
             get => _VFrame;
+        }
+        [JsonProperty]
+        public string ASync
+        {
+            set
+            {
+                _ASync = value;
+                OnPropertyChanged("ASync");
+            }
+            get => _ASync;
+        }
+        [JsonProperty]
+        public string VSync
+        {
+            set
+            {
+                _VSync = value;
+                OnPropertyChanged("VSync");
+            }
+            get => _VSync;
         }
         [JsonProperty]
         public string Input
@@ -233,14 +291,14 @@ namespace Funique
             get => _InputFramerate;
         }
         [JsonProperty]
-        public string OutputFramerate
+        public string AudioOffset
         {
             set
             {
-                _OutputFramerate = value;
-                OnPropertyChanged("OutputFramerate");
+                _AudioOffset = value;
+                OnPropertyChanged("AudioOffset");
             }
-            get => _OutputFramerate;
+            get => _AudioOffset;
         }
         [JsonProperty]
         public int StartTime
@@ -462,6 +520,19 @@ namespace Funique
             }
             get => _Settings;
         }
+        [JsonProperty]
+        public ObservableCollection<MultipleInput> Inputs
+        {
+            set
+            {
+                _Inputs = value;
+                OnPropertyChanged("Inputs");
+            }
+            get => _Inputs;
+        }
+        #endregion
+
+        #region Local Properties
         [JsonIgnore]
         public ObservableCollection<JobExecute> Jobs
         {
@@ -474,6 +545,10 @@ namespace Funique
         }
         [JsonIgnore]
         public string WorkDir { set; get; }
+        [JsonIgnore]
+        public bool MultipleInputEnable => !UseConCat;
+        [JsonIgnore]
+        public bool AudioInputEnable => !HaveAudio;
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -495,6 +570,8 @@ namespace Funique
             {
                 M3U8Setting load = JsonConvert.DeserializeObject<M3U8Setting>(File.ReadAllText(path));
                 Sync = load.Sync;
+                Lut = load.Lut;
+                Overwrite = load.Overwrite;
                 Cache = load.Cache;
                 InputFramerate = load.InputFramerate;
                 StartNumber = load.StartNumber;
@@ -502,6 +579,9 @@ namespace Funique
                 Input = load.Input;
                 InputAudio = load.InputAudio;
                 InputSubtitle = load.InputSubtitle;
+                AudioOffset = load.AudioOffset;
+                ASync = load.ASync;
+                VSync = load.VSync;
                 MasterName = load.MasterName;
                 Type = load.Type;
                 HWAccelType = load.HWAccelType;
@@ -530,6 +610,8 @@ namespace Funique
                 OutputAudioSegmentFileName = load.OutputAudioSegmentFileName;
                 OutputSubtitleSegmentFileName = load.OutputSubtitleSegmentFileName;
                 Settings = load.Settings;
+                Inputs = load.Inputs;
+                UseConCat = load.UseConCat;
             }
             catch (Exception ex)
             {
@@ -572,8 +654,10 @@ namespace Funique
                 {
                     P2_Prefix(args);
                     P2_FileInput(args);
-                    P2_HLSConfig(args, WorkDir);
-                    result.Add(new JobExecute("Main Audio HLS", "", string.Join(' ', args)));
+                    P2_HLSConfig(args);
+                    JobExecute b = new JobExecute("Main Audio HLS", "", string.Join(' ', args));
+                    b.BeginProcess = P2_JobBegin;
+                    result.Add(b);
                     args.Clear();
                 }
 
@@ -582,8 +666,10 @@ namespace Funique
                 {
                     P3_Prefix(args);
                     P3_FileInput(args);
-                    P3_HLSConfig(args, WorkDir);
-                    result.Add(new JobExecute("Main Subtitle HLS", "", string.Join(' ', args)));
+                    P3_HLSConfig(args);
+                    JobExecute b = new JobExecute("Main Subtitle HLS", "", string.Join(' ', args));
+                    b.BeginProcess = P3_JobBegin;
+                    result.Add(b);
                     args.Clear();
                 }
 
@@ -647,6 +733,7 @@ namespace Funique
         }
         void Commom_Prefix(List<string> args)
         {
+            args.Add(Overwrite ? "-y" : "-n");
             args.Add("-loglevel");
             args.Add("repeat+level+verbose");
             args.Add("-report");
@@ -663,13 +750,102 @@ namespace Funique
                 args.Add("1");
             }
         }
-        void AudioSeperation(List<string> args, int SettingCount)
+        void SegmentSetup(ABRSetting target, List<string> args, int i, int SettingCount, bool suffix)
         {
+            if (target.Width != 0 && target.Height != 0)
+            {
+                if(suffix) args.Add($"-s:v:{i}");
+                else args.Add($"-s:v");
 
+                args.Add($"{target.Width}x{target.Height}");
+            }
+
+            if (suffix) args.Add($"-c:v:{i}");
+            else args.Add($"-c:v");
+
+            args.Add(string.IsNullOrEmpty(target.VideoCodec) ? "copy" : target.VideoCodec);
+            if (target.CRF != 0)
+            {
+                if (suffix) args.Add($"-crf:{i}");
+                else args.Add($"-crf");
+                args.Add($"{target.CRF}");
+            }
+            if (!string.IsNullOrEmpty(target.Preset))
+            {
+                if (suffix) args.Add($"-preset:{i}");
+                else args.Add($"-preset");
+                args.Add($"{target.Preset}");
+            }
+            if (!string.IsNullOrEmpty(target.PixFmt))
+            {
+                if (suffix) args.Add($"-pix_fmt:{i}");
+                else args.Add($"-pix_fmt");
+                args.Add($"{target.PixFmt}");
+            }
+            if (target.MaxRate != 0)
+            {
+                if (target.VideoCodec.Contains("nvenc"))
+                {
+                    args.Add($"-rc");
+                    args.Add($"cbr");
+                    args.Add($"-cbr");
+                    args.Add($"1");
+                }
+                bool use_xx_params = target.VideoCodec == "libx265" || target.VideoCodec == "libx264";
+                if (target.VideoCodec == "libx265")
+                {
+                    args.Add($"-x265-params");
+                }
+                else if (target.VideoCodec == "libx264")
+                {
+                    args.Add($"-x264-params");
+                }
+                else
+                {
+                    if (suffix) args.Add($"-maxrate:{i}");
+                    else args.Add($"-maxrate");
+                    args.Add($"{target.MaxRate}k");
+                    if (suffix) args.Add($"-bufsize:{i}");
+                    else args.Add($"-bufsize");
+                    args.Add($"{target.MaxRate * 2}k");
+                    if (suffix) args.Add($"-b:v:{i}");
+                    else args.Add($"-b:v");
+                    args.Add($"{target.MaxRate}k");
+                }
+
+                if (use_xx_params)
+                {
+                    string a = $"vbv-maxrate={target.MaxRate}:vbv-bufsize={target.MaxRate * 2}:bitrate={target.MaxRate}";
+                    if (target.NOG != 0) a = $"no-open-gop:${target.NOG}:" + a;
+                    if (target.Keyint != 0) a = $"keyint:${target.Keyint}:" + a;
+                    args.Add($"\"{a}\"");
+                }
+
+                if (target.VideoCodec == "hevc_nvenc")
+                {
+
+                }
+            }
+            if (!string.IsNullOrEmpty(target.FPS))
+            {
+                if (suffix) args.Add($"-r:{i}");
+                else args.Add($"-r");
+                args.Add(target.FPS);
+            }
         }
-        void Seperate()
+        string ConCatMap()
         {
-
+            string vi = string.Empty;
+            for (int i = 0; i < Inputs.Count; i++)
+            {
+                vi += $"[{i}:v]";
+            }
+            vi += $"concat=n={Inputs.Count}:v=1:a=0[v]";
+            return vi;
+        }
+        string GlobalLut()
+        {
+            return $"[v]lut3d={Lut}";
         }
     }
 }

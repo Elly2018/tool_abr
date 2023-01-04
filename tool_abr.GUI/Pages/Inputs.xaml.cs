@@ -8,26 +8,26 @@ namespace Funique.GUI.Pages
     /// <summary>
     /// Interaction logic for Ladder.xaml
     /// </summary>
-    public partial class Ladder : UserControl
+    public partial class MultipleInputs : UserControl
     {
         public WindowDataContext ctx;
 
-        public Ladder()
+        public MultipleInputs()
         {
             InitializeComponent();
         }
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            ModuleOptionsView.DataContext = null;
+            InputsOptionsView.DataContext = null;
             this.DataContext = ctx;
         }
 
-        private void Addnew_Click(object sender, RoutedEventArgs e)
+        private void Inputs_Addnew_Click(object sender, RoutedEventArgs e)
         {
-            ctx.Setting.Settings.Add(new ABRSetting());
-            ModuleListView.ItemsSource = ctx.Setting.Settings;
+            ctx.Setting.Inputs.Add(new MultipleInput());
+            InputsListView.ItemsSource = ctx.Setting.Inputs;
         }
-        private void Removeabr_Click(object sender, RoutedEventArgs e)
+        private void Inputs_Removeabr_Click(object sender, RoutedEventArgs e)
         {
             MenuItem menuItem = sender as MenuItem;
             if (menuItem != null)
@@ -37,18 +37,18 @@ namespace Funique.GUI.Pages
                 {
                     Debug.WriteLine(parentContextMenu.PlacementTarget.GetType().FullName);
                     StackPanel listViewItem = parentContextMenu.PlacementTarget as StackPanel;
-                    ABRSetting cf = listViewItem.DataContext as ABRSetting;
-                    if (ModuleOptionsView.DataContext == cf)
+                    MultipleInput cf = listViewItem.DataContext as MultipleInput;
+                    if (InputsOptionsView.DataContext == cf)
                     {
-                        ModuleOptionsView.DataContext = null;
+                        InputsOptionsView.DataContext = null;
                     }
-                    ctx.Setting.Settings.Remove(cf);
-                    ModuleListView.ItemsSource = ctx.Setting.Settings;
+                    ctx.Setting.Inputs.Remove(cf);
+                    InputsListView.ItemsSource = ctx.Setting.Inputs;
                 }
             }
         }
 
-        private void MoveUp_Click(object sender, RoutedEventArgs e)
+        private void Inputs_MoveUp_Click(object sender, RoutedEventArgs e)
         {
             MenuItem menuItem = sender as MenuItem;
             if (menuItem != null)
@@ -58,16 +58,16 @@ namespace Funique.GUI.Pages
                 {
                     Debug.WriteLine(parentContextMenu.PlacementTarget.GetType().FullName);
                     StackPanel listViewItem = parentContextMenu.PlacementTarget as StackPanel;
-                    ABRSetting cf = listViewItem.DataContext as ABRSetting;
-                    int i = ctx.Setting.Settings.IndexOf(cf);
+                    MultipleInput cf = listViewItem.DataContext as MultipleInput;
+                    int i = ctx.Setting.Inputs.IndexOf(cf);
                     if (i > 0)
                     {
-                        ctx.Setting.Settings.Move(i - 1, i);
+                        ctx.Setting.Inputs.Move(i - 1, i);
                     }
                 }
             }
         }
-        private void MoveDown_Click(object sender, RoutedEventArgs e)
+        private void Inputs_MoveDown_Click(object sender, RoutedEventArgs e)
         {
             MenuItem menuItem = sender as MenuItem;
             if (menuItem != null)
@@ -77,26 +77,26 @@ namespace Funique.GUI.Pages
                 {
                     Debug.WriteLine(parentContextMenu.PlacementTarget.GetType().FullName);
                     StackPanel listViewItem = parentContextMenu.PlacementTarget as StackPanel;
-                    ABRSetting cf = listViewItem.DataContext as ABRSetting;
-                    int i = ctx.Setting.Settings.IndexOf(cf);
-                    if (i < ctx.Setting.Settings.Count - 1)
+                    MultipleInput cf = listViewItem.DataContext as MultipleInput;
+                    int i = ctx.Setting.Inputs.IndexOf(cf);
+                    if (i < ctx.Setting.Inputs.Count - 1)
                     {
-                        ctx.Setting.Settings.Move(i, i + 1);
+                        ctx.Setting.Inputs.Move(i, i + 1);
                     }
                 }
             }
         }
 
-        private void ModuleListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void InputsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListBox lb = e.OriginalSource as ListBox;
             if (lb.SelectedIndex == -1)
             {
-                ModuleOptionsView.DataContext = null;
+                InputsOptionsView.DataContext = null;
                 return;
             }
-            ABRSetting target = ctx.Setting.Settings[lb.SelectedIndex];
-            ModuleOptionsView.DataContext = target;
+            MultipleInput target = ctx.Setting.Inputs[lb.SelectedIndex];
+            InputsOptionsView.DataContext = target;
         }
 
         private void TextBox_IntOnly(object sender, TextCompositionEventArgs e)

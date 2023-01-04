@@ -10,6 +10,7 @@ namespace Funique
         string _Name;
         string _Argument;
         ObservableCollection<string> _Arguments = new ObservableCollection<string>();
+        Action _BeginProcess;
         Action _DoneProcess;
         string _Description;
         JobType _Type = JobType.FFMPEG;
@@ -70,6 +71,15 @@ namespace Funique
                 OnPropertyChanged("Arguments");
             }
             get => _Arguments;
+        }
+        public Action BeginProcess
+        {
+            set
+            {
+                _BeginProcess = value;
+                OnPropertyChanged("BeginProcess");
+            }
+            get => _BeginProcess;
         }
         public Action DoneProcess
         {

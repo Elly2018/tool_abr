@@ -82,6 +82,10 @@ namespace Funique
             setting.WorkDir = dir;
             return setting.Processes;
         }
+        public void Print(JobExecute[] jobs)
+        {
+            WriteCommand(jobs);
+        }
         public void RunSingle(JobExecute job)
         {
             Kill();
@@ -90,6 +94,7 @@ namespace Funique
         void StartBackgroundProcess(JobExecute[] args)
         {
             foreach (var i in args) jobs.Enqueue(i);
+            //jobs = new Queue<JobExecute>(jobs.Reverse());
             WriteCommand(args);
             thread = new Thread(BackgroundRunning);
             thread.Start();
@@ -127,6 +132,10 @@ namespace Funique
                 try
                 {
                     var al = args.ArgumentList;
+                    if (args.BeginProcess != null)
+                    {
+                        args.BeginProcess.Invoke();
+                    }
                     for (int i = 0; i < al.Length; i++)
                     {
                         string current = al[i];

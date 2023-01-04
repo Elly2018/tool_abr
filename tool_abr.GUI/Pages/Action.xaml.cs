@@ -57,6 +57,12 @@ namespace Funique.GUI.Pages
             if (execute == null) return;
             ctx.Control.RunSingle(execute);
         }
+        private void PrintButton_Click(object sender, RoutedEventArgs e)
+        {
+            JobExecute execute = JobModuleOptionsView.DataContext as JobExecute;
+            if (execute == null) return;
+            ctx.Control.Print(ctx.Setting.Jobs.ToArray());
+        }
 
         private void ModuleListView_JobSelectionChanged(object sender, SelectionChangedEventArgs e)
         {

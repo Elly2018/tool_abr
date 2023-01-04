@@ -24,4 +24,17 @@
     <ProjectReference Include="..\tool_abr\tool_abr.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Pages\Inputs.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Pages\Inputs.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>

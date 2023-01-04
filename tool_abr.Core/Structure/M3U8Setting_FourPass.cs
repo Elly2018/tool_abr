@@ -12,30 +12,62 @@ namespace Funique
         }
         void P4_FileInput(List<string> args)
         {
-            if (!string.IsNullOrEmpty(InputFramerate))
+            if (!string.IsNullOrEmpty(VSync))
             {
-                args.Add("-framerate");
-                args.Add($"{InputFramerate}");
+                args.Add("-vsync");
+                args.Add(VSync);
             }
-            if (Input.ToLower().Contains("png") || Input.ToLower().Contains("jpg"))
+            if (!string.IsNullOrEmpty(ASync))
             {
-                args.Add("-start_number");
-                args.Add($"{StartNumber}");
+                args.Add("-async");
+                args.Add(ASync);
             }
-            args.Add("-i");
-            args.Add($"\"{Input}\"");
+            if (UseConCat)
+            {
+                for (int i = 0; i < Inputs.Count; i++)
+                {
+                    MultipleInput buffer = Inputs[i];
+                    if (!string.IsNullOrEmpty(buffer.Framerate))
+                    {
+                        args.Add("-framerate");
+                        args.Add(buffer.Framerate);
+                    }
+                    if (Input.ToLower().Contains("png") || Input.ToLower().Contains("jpg"))
+                    {
+                        args.Add("-start_number");
+                        args.Add($"{buffer.StartNumber}");
+                    }
+                    args.Add("-i");
+                    args.Add($"\"{buffer.Input}\"");
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(InputFramerate))
+                {
+                    args.Add("-framerate");
+                    args.Add($"{InputFramerate}");
+                }
+                if (Input.ToLower().Contains("png") || Input.ToLower().Contains("jpg"))
+                {
+                    args.Add("-start_number");
+                    args.Add($"{StartNumber}");
+                }
+                args.Add("-i");
+                args.Add($"\"{Input}\"");
+            }
             if (OutputAudio)
             {
                 if ((Input.ToLower().Contains("png") || Input.ToLower().Contains("jpg")) && !string.IsNullOrEmpty(InputAudio))
                 {
+                    if (!string.IsNullOrEmpty(AudioOffset))
+                    {
+                        args.Add("-itsoffset");
+                        args.Add($"{AudioOffset}");
+                    }
                     args.Add("-i");
                     args.Add($"\"{InputAudio}\"");
                 }
-            }
-            if (!string.IsNullOrEmpty(OutputFramerate))
-            {
-                args.Add("-framerate");
-                args.Add($"{OutputFramerate}");
             }
             args.Add("-muxdelay");
             args.Add("0");
@@ -47,80 +79,42 @@ namespace Funique
                 args.Add("-force_key_frames");
                 args.Add($"\"expr: gte(t, n_forced * {FKeyframe})\"");
             }
+            if (UseConCat || !string.IsNullOrEmpty(Lut))
+            {
+                args.Add("-filter_complex");
+                List<string> vi = new List<string>();
+                if (UseConCat)
+                    vi.Add(ConCatMap());
+                if (!string.IsNullOrEmpty(Lut))
+                    vi.Add(GlobalLut());
+                args.Add($"\"{string.Join(';', vi)}\"");
+            }
+
+            for (int i = 0; i < SettingCount; i++)
+            {
+                args.Add("-map");
+                if (UseConCat) args.Add("\"v\"");
+                else args.Add("0:0");
+
+                if (OutputAudio || !string.IsNullOrEmpty(InputAudio))
+                {
+                    args.Add("-map");
+                    if(UseConCat) args.Add($"{Inputs.Count}:0");
+                    else args.Add("1:0");
+                }
+                else if (HaveAudio)
+                {
+                    args.Add("-map");
+                    args.Add("0:1");
+                }
+            }
         }
         void P4_ProfileSetup(List<string> args, int SettingCount)
         {
             for (int i = 0; i < SettingCount; i++)
             {
                 ABRSetting target = Settings[i];
-                if (VFrame != 0)
-                {
-                    args.Add("-vframes");
-                    args.Add($"{VFrame}");
-                }
-                if (target.Width != 0 && target.Height != 0)
-                {
-                    args.Add($"-s:v");
-                    args.Add($"{target.Width}x{target.Height}");
-                }
-                args.Add($"-c:v");
-                args.Add(string.IsNullOrEmpty(target.VideoCodec) ? "copy" : target.VideoCodec);
-                if (target.CRF != 0)
-                {
-                    args.Add($"-crf");
-                    args.Add($"{target.CRF}");
-                }
-                if (!string.IsNullOrEmpty(target.Preset))
-                {
-                    args.Add($"-preset");
-                    args.Add($"{target.Preset}");
-                }
-                if (!string.IsNullOrEmpty(target.PixFmt))
-                {
-                    args.Add($"-pix_fmt");
-                    args.Add($"{target.PixFmt}");
-                }
-                if (target.MaxRate != 0)
-                {
-                    if (target.VideoCodec.Contains("nvenc"))
-                    {
-                        args.Add($"-rc");
-                        args.Add($"cbr");
-                        args.Add($"-cbr");
-                        args.Add($"1");
-                    }
-                    bool use_xx_params = target.VideoCodec == "libx265" || target.VideoCodec == "libx264";
-                    if (target.VideoCodec == "libx265")
-                    {
-                        args.Add($"-x265-params");
-                    }
-                    else if (target.VideoCodec == "libx264")
-                    {
-                        args.Add($"-x264-params");
-                    }
-                    else
-                    {
-                        args.Add($"-maxrate");
-                        args.Add($"{target.MaxRate}k");
-                        args.Add($"-bufsize");
-                        args.Add($"{target.MaxRate * 2}k");
-                        args.Add($"-b:v");
-                        args.Add($"{target.MaxRate}k");
-                    }
-
-                    if (use_xx_params)
-                    {
-                        string a = $"vbv-maxrate={target.MaxRate}:vbv-bufsize={target.MaxRate * 2}:bitrate={target.MaxRate}";
-                        if (target.NOG != 0) a = $"no-open-gop:${target.NOG}:" + a;
-                        if (target.Keyint != 0) a = $"keyint:${target.Keyint}:" + a;
-                        args.Add($"\"{a}\"");
-                    }
-
-                    if (target.VideoCodec == "hevc_nvenc")
-                    {
-
-                    }
-                }
+                SegmentSetup(target, args, i, SettingCount, false);
                 if (OutputAudio)
                 {
                     if ((Input.ToLower().Contains("png") || Input.ToLower().Contains("jpg")) && !string.IsNullOrEmpty(InputAudio))
