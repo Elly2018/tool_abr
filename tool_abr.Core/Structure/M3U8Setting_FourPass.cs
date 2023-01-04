@@ -96,16 +96,19 @@ namespace Funique
                 if (UseConCat) args.Add("\"v\"");
                 else args.Add("0:0");
 
-                if (OutputAudio || !string.IsNullOrEmpty(InputAudio))
+                if (OutputAudio)
                 {
-                    args.Add("-map");
-                    if(UseConCat) args.Add($"{Inputs.Count}:0");
-                    else args.Add("1:0");
-                }
-                else if (HaveAudio)
-                {
-                    args.Add("-map");
-                    args.Add("0:1");
+                    if (!string.IsNullOrEmpty(InputAudio))
+                    {
+                        args.Add("-map");
+                        if (UseConCat) args.Add($"{Inputs.Count}:0");
+                        else args.Add("1:0");
+                    }
+                    else if (HaveAudio)
+                    {
+                        args.Add("-map");
+                        args.Add("0:1");
+                    }
                 }
             }
         }

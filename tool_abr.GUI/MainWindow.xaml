@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Width="{Binding WindowWidth, Mode=TwoWay}"
         Loaded="Window_Loaded"
-        Title="Clipping Master" MaxHeight="800" MinHeight="400" MaxWidth="850" MinWidth="850" Style="{DynamicResource CustomWindowStyle}">
+        Title="Clipping Master" MinHeight="400" MinWidth="850" Style="{DynamicResource CustomWindowStyle}">
     <Window.DataContext>
         <local:WindowDataContext />
     </Window.DataContext>
@@ -17,7 +17,7 @@
         <!-- Main Frame -->
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="580"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <TabControl Grid.Row="1">
