@@ -3,12 +3,25 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Funique
 {
     public sealed class ABRControl : IDisposable
     {
+        internal const int CTRL_C_EVENT = 0;
+        [DllImport("kernel32.dll")]
+        internal static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern bool AttachConsole(uint dwProcessId);
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        internal static extern bool FreeConsole();
+        [DllImport("kernel32.dll")]
+        static extern bool SetConsoleCtrlHandler(ConsoleCtrlDelegate HandlerRoutine, bool Add);
+        // Delegate type to be used as the Handler Routine for SCCH
+        delegate Boolean ConsoleCtrlDelegate(uint CtrlType);
+
         public static ABRControl Instance
         {
             get
@@ -26,6 +39,7 @@ namespace Funique
             get
             {
                 Process proc = new Process();
+                proc.StartInfo.RedirectStandardInput = true;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.EnableRaisingEvents = true;
@@ -76,6 +90,14 @@ namespace Funique
                 Debug.WriteLine(ex.Message);
             }
 
+        }
+        public bool Close()
+        {
+            if(proc != null && !proc.HasExited)
+            {
+                proc.StandardInput.WriteLine("q");
+            }
+            return false;
         }
         public JobExecute[] Analysis(M3U8Setting setting)
         {
@@ -171,7 +193,8 @@ namespace Funique
                 }
                 catch (ThreadInterruptedException ex)
                 {
-                    proc.Kill();
+                    if(!proc.HasExited)
+                        proc.Kill();
                     Debug.WriteLine(ex.Message);
                 }
             }

@@ -6,6 +6,8 @@ namespace Funique
     public sealed class MultipleInput : INotifyPropertyChanged
     {
         public string _Name = "Default Name";
+        public bool _Sync;
+        public int _StreamingLoop;
         public string _Input;
         public int _StartNumber;
         public string _Framerate;
@@ -19,6 +21,26 @@ namespace Funique
                 OnPropertyChanged("Name");
             }
             get => _Name;
+        }
+        [JsonProperty]
+        public bool Sync
+        {
+            set
+            {
+                _Sync = value;
+                OnPropertyChanged("Sync");
+            }
+            get => _Sync;
+        }
+        [JsonProperty]
+        public int StreamingLoop
+        {
+            set
+            {
+                _StreamingLoop = value;
+                OnPropertyChanged("StreamingLoop");
+            }
+            get => _StreamingLoop;
         }
         [JsonProperty]
         public int StartNumber

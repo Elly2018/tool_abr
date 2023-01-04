@@ -34,9 +34,11 @@
             <RowDefinition Height="23" />
             <RowDefinition Height="23" />
             <RowDefinition Height="23" />
+            <RowDefinition Height="23" />
         </Grid.RowDefinitions>
 
-        <Label Content="Master Name" Grid.Column="0" Grid.Row="1" />
+        <Label Content="Master Name" Grid.Column="0" Grid.Row="0" ToolTip="{Binding MasterNameTooltip}" />
+        <Label Content="Cache" Grid.Column="0" Grid.Row="1" />
         <Label Content="Type" Grid.Column="0" Grid.Row="2" />
         <Label Content="ListSize" Grid.Column="0" Grid.Row="3" />
         <Label Content="HLS Init Time" Grid.Column="0" Grid.Row="4" />
@@ -51,7 +53,8 @@
         <Label Content="Output M3U8" Grid.Column="0" Grid.Row="13" />
         <Label Content="Output Segment" Grid.Column="0" Grid.Row="14" />
 
-        <TextBox Text="{Binding MasterName}" Grid.Column="1" Grid.Row="1" />
+        <TextBox Text="{Binding MasterName}" Grid.Column="1" Grid.Row="0" />
+        <CheckBox PreviewTextInput="TextBox_IntOnly" IsChecked="{Binding Cache}" Grid.Column="1" Grid.Row="1" />
         <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding HLSTypeDict}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Type}" />
         <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding ListSize}" Grid.Column="1" Grid.Row="3" />
         <TextBox PreviewTextInput="TextBox_IntOnly" Text="{Binding HLSInitTime}" Grid.Column="1" Grid.Row="4" />

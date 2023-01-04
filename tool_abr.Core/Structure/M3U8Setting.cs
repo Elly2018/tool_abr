@@ -551,6 +551,16 @@ namespace Funique
         public bool AudioInputEnable => !HaveAudio;
         #endregion
 
+        #region Tooltip
+        public string MasterNameTooltip
+        {
+            get
+            {
+                return "Generate master M3U8 file name, This will generate in the work directory";
+            }
+        }
+        #endregion
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string property)
         {

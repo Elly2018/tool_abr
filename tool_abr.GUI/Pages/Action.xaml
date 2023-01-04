@@ -47,7 +47,8 @@
             <Button Name="RunButton" Content="RUN" Grid.Column="1" Grid.Row="0" Click="RunButton_Click" />
             <Button Name="CleanButton" Content="CLEAN" Grid.Column="0" Grid.Row="1" Click="CleanButton_Click" />
             <Button Name="PrintButton" Content="PRINT COMMANDS" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Click="PrintButton_Click" />
-            <Button Name="KillButton" Content="KILL" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Click="KillButton_Click" />
+            <Button Name="KillButton" Content="KILL" Grid.Column="0" Grid.Row="2" Click="KillButton_Click" />
+            <Button Name="CloseButton" Content="CLOSE" Grid.Column="1" Grid.Row="2" Click="CloseButton_Click" />
 
             <Separator Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
 

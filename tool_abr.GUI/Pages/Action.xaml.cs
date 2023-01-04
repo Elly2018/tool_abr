@@ -40,6 +40,10 @@ namespace Funique.GUI.Pages
         {
             ctx.Control.Kill();
         }
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            ctx.Control.Close();
+        }
         private void AnalysisButton_Click(object sender, RoutedEventArgs e)
         {
             var ass = ctx.Control.Analysis(ctx.Setting);
