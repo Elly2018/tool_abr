@@ -49,18 +49,19 @@ namespace Funique
                 int bitrate = 0;
                 int width = 0;
                 int height = 0;
-                foreach (JToken oi in o["streams"])
-                {
-                    bitrate += oi["bit_rate"].Value<int>();
-                    if(oi["width"] != null)
+                if(o.ContainsKey("streams"))
+                    foreach (JToken oi in o["streams"])
                     {
-                        width = oi["width"].Value<int>();
+                        bitrate += oi["bit_rate"].Value<int>();
+                        if(oi["width"] != null)
+                        {
+                            width = oi["width"].Value<int>();
+                        }
+                        if (oi["height"] != null)
+                        {
+                            height = oi["height"].Value<int>();
+                        }
                     }
-                    if (oi["height"] != null)
-                    {
-                        height = oi["height"].Value<int>();
-                    }
-                }
                 Debug.WriteLine($"Stream {i}: {bitrate}");
 
                 realstring += $"#EXT-X-STREAM-INF:BANDWIDTH={bitrate},RESOLUTION={width}x{height}";

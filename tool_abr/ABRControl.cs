@@ -156,7 +156,14 @@ namespace Funique
                     var al = args.ArgumentList;
                     if (args.BeginProcess != null)
                     {
-                        args.BeginProcess.Invoke();
+                        try
+                        {
+                            args.BeginProcess.Invoke();
+                        }
+                        catch (Exception ex)
+                        {
+                            log.Invoke($"{ex.Message}\n{ex.StackTrace}");
+                        }
                     }
                     for (int i = 0; i < al.Length; i++)
                     {
@@ -188,7 +195,14 @@ namespace Funique
                     }
                     if (args.DoneProcess != null)
                     {
-                        args.DoneProcess.Invoke();
+                        try
+                        {
+                            args.DoneProcess.Invoke();
+                        }
+                        catch(Exception ex)
+                        {
+                            log.Invoke($"{ex.Message}\n{ex.StackTrace}");
+                        }
                     }
                 }
                 catch (ThreadInterruptedException ex)
