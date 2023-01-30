@@ -50,8 +50,8 @@ namespace Funique
             args.Add("-segment_list_size");
             args.Add("0");
             args.Add("-segment_list");
-            args.Add($"{OutputAudioM3U8FileName}");
-            args.Add($"{OutputAudioSegmentFileName}");
+            args.Add($"\"{OutputAudioM3U8FileName}\"");
+            args.Add($"\"{OutputAudioSegmentFileName}\"");
         }
     }
 }

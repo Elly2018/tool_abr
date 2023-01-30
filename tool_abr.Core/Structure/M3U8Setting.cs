@@ -689,7 +689,6 @@ namespace Funique
                     P4_Prefix(args);
                     P4_FileInput(args);
                     P4_MapLayout(args, SettingCount);
-                    P4_ProfileSetup(args, SettingCount);
                     if (ProcessingSingleFileFirst) result.Insert(0, new JobExecute("Single File", "", string.Join(' ', args)));
                     else result.Add(new JobExecute("Single File", "", string.Join(' ', args)));
                     args.Clear();

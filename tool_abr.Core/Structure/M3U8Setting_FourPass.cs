@@ -110,12 +110,7 @@ namespace Funique
                         args.Add("0:1");
                     }
                 }
-            }
-        }
-        void P4_ProfileSetup(List<string> args, int SettingCount)
-        {
-            for (int i = 0; i < SettingCount; i++)
-            {
+
                 ABRSetting target = Settings[i];
                 SegmentSetup(target, args, i, SettingCount, false);
                 if (OutputAudio)
