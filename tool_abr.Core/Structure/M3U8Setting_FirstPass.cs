@@ -112,12 +112,7 @@ namespace Funique
                     args.Add("-map");
                     args.Add("0:1");
                 }
-            }
-        }
-        void P1_ProfileSetup(List<string> args, int SettingCount)
-        {
-            for (int i = 0; i < SettingCount; i++)
-            {
+
                 ABRSetting target = Settings[i];
                 SegmentSetup(target, args, i, SettingCount, true);
                 if ((!SeperateAudio && !string.IsNullOrEmpty(InputAudio)) || HaveAudio)

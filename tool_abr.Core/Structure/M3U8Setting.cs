@@ -652,7 +652,6 @@ namespace Funique
                     P1_Prefix(args);
                     P1_FileInput(args);
                     P1_MapLayout(args, SettingCount);
-                    P1_ProfileSetup(args, SettingCount);
                     P1_HLSMapLayout(args, buffer, SettingCount);
                     P1_HLSConfig(args, buffer, WorkDir);
                     result.Add(new JobExecute("Main ABR HLS", "", string.Join(' ', args)));

@@ -36,11 +36,11 @@
             <RowDefinition Height="23" />
         </Grid.RowDefinitions>
 
-        <Label Content="HWAccel" Grid.Column="0" Grid.Row="0" />
-        <Label Content="MuxingQueue" Grid.Column="0" Grid.Row="1" />
+        <Label Content="HWAccel" Grid.Column="0" Grid.Row="0" ToolTip="GPU 加速讀取項目" />
+        <Label Content="MuxingQueue" Grid.Column="0" Grid.Row="1" ToolTip="排序上限" />
         <Label Content="Audio Offset" Grid.Column="0" Grid.Row="2" />
         <Label Content="Audio Seperate" Grid.Column="0" Grid.Row="3" />
-        <Label Content="Output Single File" Grid.Column="0" Grid.Row="4" />
+        <Label Content="Output Single File" Grid.Column="0" Grid.Row="4" ToolTip="輸出單一檔案" />
         <Label Content="Single File Audio" Grid.Column="0" Grid.Row="5" />
         <Label Content="Process Single File First" Grid.Column="0" Grid.Row="6" />
         <Label Content="Audio Source" Grid.Column="0" Grid.Row="7" />
